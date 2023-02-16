@@ -65,6 +65,7 @@ namespace EdPro.Controllers
             if(!Time(educationProgram.ImplementationDate))
             {
                 return View(educationProgram);
+                //www
             }
             if (ModelState.IsValid)
             {
