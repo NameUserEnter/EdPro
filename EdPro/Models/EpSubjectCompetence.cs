@@ -13,7 +13,7 @@ namespace EdPro.Models
         [Required(ErrorMessage = "Поле не повинно бути пустим")]
         [Display(Name = "Спеціальність та компетентність")]
         public int SpecialityCompetenceId { get; set; }
-        [Display(Name = "Спецівльність та компетентність")]
+        [Display(Name = "Спеціальність та компетентність")]
 
         public virtual SpecialityCompetence SpecialityCompetence { get; set; } = null!;
         [Display(Name = "Предмет")]

@@ -4,9 +4,9 @@
     ViewData["Title"] = "Create";
 }
 
-<h1>Create</h1>
+<h1>Додавання навчальної програми</h1>
 
-<h4>EducationProgram</h4>
+<h4>Навчальна програма</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -39,15 +39,20 @@
                 <input asp-for="ImplementationDate" class="form-control" />
                 <span asp-validation-for="ImplementationDate" class="text-danger"></span>
             </div>
+            <p></p>
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="Додати" class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <p class="text-danger">@ViewData["ErrorMessage"]</p>
+</div>
+
+<div>
+    <a asp-action="Index">Повернутися</a>
 </div>
 
 @section Scripts {
