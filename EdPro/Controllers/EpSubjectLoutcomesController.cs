@@ -19,10 +19,15 @@ namespace EdPro.Controllers
         }
 
         // GET: EpSubjectLoutcomes
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? id, string? learningOutcome1, string? loname, int? specialtyId)
         {
-            var edProContext = _context.EpSubjectLoutcomes.Include(e => e.LearningOutcome).Include(e => e.Subject);
-            return View(await edProContext.ToListAsync());
+            if (id == 0) return RedirectToAction("LearningOutcomes", "Index");
+            ViewBag.LearningOutcomeId = id;
+            ViewBag.LearningOutcomeLearningOutcome1 = learningOutcome1;
+            ViewBag.LearningOutcomeLoname = loname;
+            ViewBag.LearningOutcomeSpecialtyId = specialtyId;
+            var epSubjectLoutcomesByLearningOutcome = _context.EpSubjectLoutcomes.Where(f => f.LearningOutcomeId == id).Include(f => f.Subject).Include(f => f.LearningOutcome);
+            return View(await epSubjectLoutcomesByLearningOutcome.ToListAsync());
         }
 
         // GET: EpSubjectLoutcomes/Details/5
@@ -46,10 +51,17 @@ namespace EdPro.Controllers
         }
 
         // GET: EpSubjectLoutcomes/Create
-        public IActionResult Create()
+        public IActionResult Create(int learningOutcomeId)
         {
-            ViewData["LearningOutcomeId"] = new SelectList(_context.LearningOutcomes, "Id", "LearningOutcome1");
-            ViewData["SubjectId"] = new SelectList(_context.Subjects, "Id", "Name");
+            ViewBag.LearningOutcomeId = learningOutcomeId;
+            ViewBag.LearningOutcomeLearningOutcome1 = _context.LearningOutcomes.Where(c => c.Id == learningOutcomeId).FirstOrDefault().LearningOutcome1;
+            ViewBag.LearningOutcomeLoname = _context.LearningOutcomes.Where(c => c.Id == learningOutcomeId).FirstOrDefault().Loname;
+            ViewBag.LearningOutcomeSpecialtyId = _context.LearningOutcomes.Where(c => c.Id == learningOutcomeId).FirstOrDefault().SpecialityId;
+
+            int specialityId = _context.LearningOutcomes.Where(c => c.Id == learningOutcomeId).FirstOrDefault().SpecialityId;
+            List<int> educationProgramsId = _context.EducationPrograms.Where(c => c.SpecialityId == specialityId).Select(c => c.Id).ToList();
+
+            ViewData["SubjectId"] = new SelectList(_context.Subjects.Where(b => educationProgramsId.Contains(b.EprogramId)), "Id", "Name");
             return View();
         }
 
@@ -58,16 +70,29 @@ namespace EdPro.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,SubjectId,LearningOutcomeId")] EpSubjectLoutcome epSubjectLoutcome)
+        public async Task<IActionResult> Create(int learningOutcomeId, [Bind("Id,SubjectId,LearningOutcomeId")] EpSubjectLoutcome epSubjectLoutcome)
         {
+            epSubjectLoutcome.LearningOutcomeId = learningOutcomeId;
             if (ModelState.IsValid)
             {
                 _context.Add(epSubjectLoutcome);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index", "EpSubjectLoutcomes", new
+                {
+                    id = learningOutcomeId,
+                    learningOutcome1 = _context.LearningOutcomes.Where(c => c.Id == learningOutcomeId).FirstOrDefault().LearningOutcome1,
+                    loname = _context.LearningOutcomes.Where(c => c.Id == learningOutcomeId).FirstOrDefault().Loname,
+                    specialtyId = _context.LearningOutcomes.Where(c => c.Id == learningOutcomeId).FirstOrDefault().SpecialityId
+                });
             }
-            ViewData["LearningOutcomeId"] = new SelectList(_context.LearningOutcomes, "Id", "LearningOutcome1", epSubjectLoutcome.LearningOutcomeId);
-            ViewData["SubjectId"] = new SelectList(_context.Subjects, "Id", "Name", epSubjectLoutcome.SubjectId);
+            ViewBag.LearningOutcomeId = learningOutcomeId;
+            ViewBag.LearningOutcomeLearningOutcome1 = _context.LearningOutcomes.Where(c => c.Id == learningOutcomeId).FirstOrDefault().LearningOutcome1;
+            ViewBag.LearningOutcomeLoname = _context.LearningOutcomes.Where(c => c.Id == learningOutcomeId).FirstOrDefault().Loname;
+            ViewBag.LearningOutcomeSpecialtyId = _context.LearningOutcomes.Where(c => c.Id == learningOutcomeId).FirstOrDefault().SpecialityId;
+            int specialtyId = _context.LearningOutcomes.Where(c => c.Id == learningOutcomeId).FirstOrDefault().SpecialityId;
+            List<int> educationProgramsId = _context.EducationPrograms.Where(c => c.SpecialityId == specialtyId).Select(c => c.Id).ToList();
+
+            ViewData["SubjectId"] = new SelectList(_context.Subjects.Where(b => educationProgramsId.Contains(b.EprogramId)), "Id", "Name");
             return View(epSubjectLoutcome);
         }
 

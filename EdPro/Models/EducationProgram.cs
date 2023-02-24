@@ -18,9 +18,9 @@ namespace EdPro.Models
         [Required(ErrorMessage = "Поле не повинно бути пустим")]
         [Display(Name = "Спеціальність")]
         public int SpecialityId { get; set; }
-        [Required(ErrorMessage = "Поле не повинно бути пустим")]
+        //[Required(ErrorMessage = "Поле не повинно бути пустим")]
         [Display(Name = "ЕДБО")]
-        public string Edbo { get; set; } = null!;
+        public string? Edbo { get; set; } = null!;
         [Required(ErrorMessage = "Поле не повинно бути пустим")]
         [Display(Name = "Тип навчальної програми")]
         public int EdPrTypeId { get; set; }
@@ -29,6 +29,7 @@ namespace EdPro.Models
         public int FacultyId { get; set; }
         [Required(ErrorMessage = "Поле не повинно бути пустим")]
         [Display(Name = "Дата створення")]
+        [DataType(DataType.Date)]
         public DateTime ImplementationDate { get; set; }
         [Display(Name = "Тип навчальної програми")]
         public virtual EdProgramType EdPrType { get; set; } = null!;

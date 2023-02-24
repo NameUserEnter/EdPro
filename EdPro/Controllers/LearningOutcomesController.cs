@@ -41,7 +41,13 @@ namespace EdPro.Controllers
                 return NotFound();
             }
 
-            return View(learningOutcome);
+            return RedirectToAction("Index", "EpSubjectLoutcomes", new
+            {
+                id = learningOutcome.Id,
+                learningOutcome1 = learningOutcome.LearningOutcome1,
+                loname = learningOutcome.Loname,
+                specialtyId = learningOutcome.SpecialityId
+            });
         }
 
         // GET: LearningOutcomes/Create
@@ -58,14 +64,28 @@ namespace EdPro.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,LearningOutcome1,Loname,SpecialityId")] LearningOutcome learningOutcome)
         {
-            if (ModelState.IsValid)
+            if (IsUnique(learningOutcome.LearningOutcome1, learningOutcome.Loname, learningOutcome.SpecialityId))
             {
-                _context.Add(learningOutcome);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                if (ModelState.IsValid)
+                {
+                    _context.Add(learningOutcome);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+            }
+            else
+            {
+                ViewData["ErrorMessage"] = "Такий навчальний результат в цій спеціальності є!";
             }
             ViewData["SpecialityId"] = new SelectList(_context.Specialities, "Id", "Name", learningOutcome.SpecialityId);
             return View(learningOutcome);
+        }
+
+        bool IsUnique(string learningOutcome, string loname, int specialityId)
+        {
+            var learningOutcomes = _context.LearningOutcomes.Where(b => b.SpecialityId == specialityId && b.Loname == loname).ToList();
+            if (learningOutcomes.Count == 0) return true;
+            return false;
         }
 
         // GET: LearningOutcomes/Edit/5

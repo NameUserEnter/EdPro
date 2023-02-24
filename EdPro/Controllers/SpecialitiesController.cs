@@ -41,7 +41,11 @@ namespace EdPro.Controllers
                 return NotFound();
             }
 
-            return View(speciality);
+            return RedirectToAction("Index", "SpecialityCompetences", new
+            {
+                id = speciality.Id,
+                name = speciality.Name
+            });
         }
 
         // GET: Specialities/Create
@@ -57,13 +61,27 @@ namespace EdPro.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name")] Speciality speciality)
         {
-            if (ModelState.IsValid)
+            if (IsUnique(speciality.Name))
             {
-                _context.Add(speciality);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                if (ModelState.IsValid)
+                {
+                    _context.Add(speciality);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+            }
+            else
+            {
+                ViewData["ErrorMessage"] = "Така спеціальність вже додана!";
             }
             return View(speciality);
+        }
+
+        bool IsUnique(string name)
+        {
+            var specialities = _context.Specialities.Where(b => b.Name == name).ToList();
+            if (specialities.Count == 0) return true;
+            return false;
         }
 
         // GET: Specialities/Edit/5

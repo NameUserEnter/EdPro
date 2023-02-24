@@ -15,10 +15,10 @@ namespace EdPro.Models
         [Required(ErrorMessage = "Поле не повинно бути пустим")]
         [Display(Name = "Назва")]
         public string Name { get; set; } = null!;
-        [Required(ErrorMessage = "Поле не повинно бути пустим")]
+        //[Required(ErrorMessage = "Поле не повинно бути пустим")]
         [Display(Name = "Університет")]
         public int UniversityId { get; set; }
-        [Display(Name = "Університет")]
+
 
         public virtual University University { get; set; } = null!;
         public virtual ICollection<EducationProgram> EducationPrograms { get; set; }

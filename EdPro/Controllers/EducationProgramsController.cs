@@ -43,7 +43,8 @@ namespace EdPro.Controllers
                 return NotFound();
             }
 
-            return View(educationProgram);
+            return RedirectToAction("Index", "Subjects", new { id = educationProgram.Id, name = educationProgram.Name, specialityId = educationProgram.SpecialityId,
+                edbo = educationProgram.Edbo, edPrTypeId = educationProgram.EdPrTypeId, facultyId = educationProgram.FacultyId, implementationDate = educationProgram.ImplementationDate  });
         }
 
         // GET: EducationPrograms/Create
@@ -62,22 +63,36 @@ namespace EdPro.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,SpecialityId,Edbo,EdPrTypeId,FacultyId,ImplementationDate")] EducationProgram educationProgram)
         {
-            if(!Time(educationProgram.ImplementationDate))
+            if (!Time(educationProgram.ImplementationDate))
             {
-                return View(educationProgram);
-                //www
+                ViewData["ErrorMessage"] = "Рік впровадження старіший за 1960!";
             }
-            if (ModelState.IsValid)
+            else if(IsUnique(educationProgram.SpecialityId, educationProgram.EdPrTypeId, educationProgram.FacultyId, educationProgram.ImplementationDate))
             {
-                _context.Add(educationProgram);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                if (ModelState.IsValid)
+                {
+                    _context.Add(educationProgram);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+            }
+            else
+            {
+                ViewData["ErrorMessage"] = "Навчальна програма вже додана!";
             }
             ViewData["EdPrTypeId"] = new SelectList(_context.EdProgramTypes, "Id", "TypeName", educationProgram.EdPrTypeId);
             ViewData["FacultyId"] = new SelectList(_context.Faculties, "Id", "Name", educationProgram.FacultyId);
             ViewData["SpecialityId"] = new SelectList(_context.Specialities, "Id", "Name", educationProgram.SpecialityId);
             return View(educationProgram);
         }
+
+        bool IsUnique(int specialityId, int edPrTypeId, int facultyId, DateTime implementationDate)
+        {
+            var educationPrograms = _context.EducationPrograms.Where(b => b.SpecialityId == specialityId && b.FacultyId == facultyId && b.EdPrTypeId == edPrTypeId && b.ImplementationDate == implementationDate).ToList();
+            if (educationPrograms.Count == 0) return true;
+            return false;
+        }
+
         public bool Time(DateTime time)
         {
             if (time.Year > 1960)
