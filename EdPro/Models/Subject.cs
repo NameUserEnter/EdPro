@@ -23,9 +23,9 @@ namespace EdPro.Models
         [Display(Name = "Кредити")]
         public int Credit { get; set; }
         [Required(ErrorMessage = "Поле не повинно бути пустим")]
-        [Display(Name = "Контролів")]
+        [Display(Name = "Контроль")]
         public int ControlId { get; set; }
-        [Display(Name = "Контролів")]
+        [Display(Name = "Контроль")]
         public virtual ControlType Control { get; set; } = null!;
         [Display(Name = "Навчальна програма")]
         public virtual EducationProgram Eprogram { get; set; } = null!;

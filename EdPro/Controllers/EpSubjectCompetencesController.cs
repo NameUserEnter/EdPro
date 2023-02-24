@@ -19,10 +19,14 @@ namespace EdPro.Controllers
         }
 
         // GET: EpSubjectCompetences
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? id, int? specialityId, int? competenceId)
         {
-            var edProContext = _context.EpSubjectCompetences.Include(e => e.SpecialityCompetence).Include(e => e.Subject);
-            return View(await edProContext.ToListAsync());
+            if (id == 0) return RedirectToAction("SpecialityCompetences", "Index");
+            ViewBag.SpecialityCompetenceId = id;
+            ViewBag.SpecialityCompetenceSpecialityId = specialityId;
+            ViewBag.SpecialityCompetenceCompetenceId = competenceId;
+            var subjectCompetencesBySpecialityCompetence = _context.EpSubjectCompetences.Where(f => f.SpecialityCompetenceId == id).Include(f => f.Subject);
+            return View(await subjectCompetencesBySpecialityCompetence.ToListAsync());
         }
 
         // GET: EpSubjectCompetences/Details/5
@@ -46,10 +50,15 @@ namespace EdPro.Controllers
         }
 
         // GET: EpSubjectCompetences/Create
-        public IActionResult Create()
+        public IActionResult Create(int specialityCompetenceId)
         {
-            ViewData["SpecialityCompetenceId"] = new SelectList(_context.SpecialityCompetences, "Id", "Id");
-            ViewData["SubjectId"] = new SelectList(_context.Subjects, "Id", "Name");
+            ViewBag.SpecialityCompetenceId = specialityCompetenceId;
+            ViewBag.SpecialityCompetenceSpecialityId = _context.SpecialityCompetences.Where(c => c.Id == specialityCompetenceId).FirstOrDefault().SpecialityId;
+            ViewBag.SpecialityCompetenceCompetenceId = _context.SpecialityCompetences.Where(c => c.Id == specialityCompetenceId).FirstOrDefault().CompetenceId;
+            int specialityId = _context.SpecialityCompetences.Where(c => c.Id == specialityCompetenceId).FirstOrDefault().SpecialityId;
+            List<int> educationProgramsId = _context.EducationPrograms.Where(c => c.SpecialityId == specialityId).Select(c => c.Id).ToList();
+
+            ViewData["SubjectId"] = new SelectList(_context.Subjects.Where(b => educationProgramsId.Contains(b.EprogramId)), "Id", "Name");
             return View();
         }
 
@@ -58,16 +67,27 @@ namespace EdPro.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,SubjectId,SpecialityCompetenceId")] EpSubjectCompetence epSubjectCompetence)
+        public async Task<IActionResult> Create(int specialityCompetenceId, [Bind("Id,SubjectId,SpecialityCompetenceId")] EpSubjectCompetence epSubjectCompetence)
         {
+            epSubjectCompetence.SpecialityCompetenceId = specialityCompetenceId;
             if (ModelState.IsValid)
             {
                 _context.Add(epSubjectCompetence);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index", "EpSubjectCompetences", new
+                {
+                    id = specialityCompetenceId,
+                    specialityId = _context.SpecialityCompetences.Where(c => c.Id == specialityCompetenceId).FirstOrDefault().SpecialityId,
+                    competenceId = _context.SpecialityCompetences.Where(c => c.Id == specialityCompetenceId).FirstOrDefault().CompetenceId
+                });
             }
-            ViewData["SpecialityCompetenceId"] = new SelectList(_context.SpecialityCompetences, "Id", "Id", epSubjectCompetence.SpecialityCompetenceId);
-            ViewData["SubjectId"] = new SelectList(_context.Subjects, "Id", "Name", epSubjectCompetence.SubjectId);
+            ViewBag.SpecialityCompetenceId = specialityCompetenceId;
+            ViewBag.SpecialityCompetenceSpecialityId = _context.SpecialityCompetences.Where(c => c.Id == specialityCompetenceId).FirstOrDefault().SpecialityId;
+            ViewBag.SpecialityCompetenceCompetenceId = _context.SpecialityCompetences.Where(c => c.Id == specialityCompetenceId).FirstOrDefault().CompetenceId;
+            int specialityId = _context.SpecialityCompetences.Where(c => c.Id == specialityCompetenceId).FirstOrDefault().SpecialityId;
+            List<int> educationProgramsId = _context.EducationPrograms.Where(c => c.SpecialityId == specialityId).Select(c => c.Id).ToList();
+
+            ViewData["SubjectId"] = new SelectList(_context.Subjects.Where(b => educationProgramsId.Contains(b.EprogramId)), "Id", "Name");
             return View(epSubjectCompetence);
         }
 

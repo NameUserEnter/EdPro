@@ -4,17 +4,17 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<h1>Необхідні предмети для компетентності</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    @Html.ActionLink("Додати необхідний предмет", "Create", new {SpecialityCompetenceId = @ViewBag.SpecialityCompetenceId})
 </p>
 <table class="table">
     <thead>
         <tr>
-            <th>
+@*            <th>
                 @Html.DisplayNameFor(model => model.SpecialityCompetence)
-            </th>
+            </th>*@
             <th>
                 @Html.DisplayNameFor(model => model.Subject)
             </th>
@@ -24,16 +24,16 @@
     <tbody>
 @foreach (var item in Model) {
         <tr>
-            <td>
+@*            <td>
                 @Html.DisplayFor(modelItem => item.SpecialityCompetence.Id)
-            </td>
+            </td>*@
             <td>
                 @Html.DisplayFor(modelItem => item.Subject.Name)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                <a asp-action="Edit" asp-route-id="@item.Id">Редагувати</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Деталі</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Видалити</a>
             </td>
         </tr>
 }

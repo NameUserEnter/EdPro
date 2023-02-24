@@ -4,9 +4,9 @@
     ViewData["Title"] = "Create";
 }
 
-<h1>Create</h1>
+<h1>Додавання університету</h1>
 
-<h4>University</h4>
+<h4>Університет</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -22,15 +22,20 @@
                 <input asp-for="Edbo" class="form-control" />
                 <span asp-validation-for="Edbo" class="text-danger"></span>
             </div>
+            <p></p>
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="Додати" class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <p class="text-danger">@ViewData["ErrorMessage"]</p>
+</div>
+
+<div>
+    <a asp-action="Index">Повернутися</a>
 </div>
 
 @section Scripts {

@@ -4,9 +4,9 @@
     ViewData["Title"] = "Create";
 }
 
-<h1>Create</h1>
+<h1>Додавання предмету до навчальної програми @ViewBag.EducationProgramName</h1>
 
-<h4>Subject</h4>
+<h4>Предмет</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -17,10 +17,10 @@
                 <input asp-for="Name" class="form-control" />
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
-            <div class="form-group">
+@*            <div class="form-group">
                 <label asp-for="EprogramId" class="control-label"></label>
                 <select asp-for="EprogramId" class ="form-control" asp-items="ViewBag.EprogramId"></select>
-            </div>
+            </div>*@
             <div class="form-group">
                 <label asp-for="Credit" class="control-label"></label>
                 <input asp-for="Credit" class="form-control" />
@@ -30,16 +30,27 @@
                 <label asp-for="ControlId" class="control-label"></label>
                 <select asp-for="ControlId" class ="form-control" asp-items="ViewBag.ControlId"></select>
             </div>
+
+            <input type="hidden" value="@ViewBag.EducationProgramId" name="EducationProgramId" />
+
+            <p></p>
+
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="Додати" class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <p class="text-danger">@ViewData["ErrorMessage"]</p>
 </div>
+
+@*<div>
+    <a asp-action="Index">Повернутися</a>
+</div>*@
+
+@Html.ActionLink("Повернутись","Index", new {id = ViewBag.EducationProgramId, name = ViewBag.EducationProgramName, specialityId = ViewBag.EducationProgramSpecialityId, edbo = ViewBag.EducationProgramEdbo, edPrTypeId = ViewBag.EducationProgramEdPrTypeId, facultyId = ViewBag.EducationProgramFacultyId, implementationDate = ViewBag.EducationProgramImplementationDate})
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
