@@ -1,0 +1,21 @@
+﻿@model EdPro.ViewModel.EditUserViewModel
+@{
+    ViewBag.Title = "Редагування користувача";
+}
+<form asp-action="Edit" asp-controller="User">
+    <div asp-validation-summary="All" class="text-danger"></div>
+    <div class="form-group">
+        <input type="hidden" asp-for="Id" />
+    </div>
+    <div class="form-group">
+        <label asp-for="Email" class="control-label">Email</label>
+        <input type="text" asp-for="Email" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="Year" class="control-label">Рік народжения</label>
+        <input type="number" asp-for="Year" class="form-control" />
+    </div>
+    <div class="form-group">
+        <input type="submit" value="Зберегти" class="btn btn-outline-secondary" />
+    </div>
+</form>
