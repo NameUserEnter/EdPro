@@ -11,6 +11,10 @@ builder.Configuration.GetConnectionString("DefaultConnection")
 ));
 
 builder.Services.AddControllersWithViews();
+builder.Services.AddTransient<IPasswordValidator<User>,
+        CustomPasswordValidator>(serv => new CustomPasswordValidator(6));
+
+builder.Services.AddTransient<IUserValidator<User>, CustomUserValidator>();
 
 builder.Services.AddDbContext<IdentityContext>(option => option.UseSqlServer(
     builder.Configuration.GetConnectionString("IdentityConnection")
