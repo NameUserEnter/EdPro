@@ -41,7 +41,7 @@ namespace EdPro.Controllers
                 return NotFound();
             }
 
-            return View(university);
+            return RedirectToAction("Index", "Faculties", new { id = university.Id, name = university.Name, edbo = university.Edbo });
         }
 
         // GET: Universities/Create
@@ -57,13 +57,27 @@ namespace EdPro.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,Edbo")] University university)
         {
-            if (ModelState.IsValid)
+            if (IsUnique(university.Name))
             {
-                _context.Add(university);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                if (ModelState.IsValid)
+                {
+                    _context.Add(university);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+            }
+            else
+            {
+                ViewData["ErrorMessage"] = "Такий університет вже доданий!";
             }
             return View(university);
+        }
+
+        bool IsUnique(string name)
+        {
+            var universities = _context.Universities.Where(b => b.Name == name).ToList();
+            if (universities.Count == 0) return true;
+            return false;
         }
 
         // GET: Universities/Edit/5

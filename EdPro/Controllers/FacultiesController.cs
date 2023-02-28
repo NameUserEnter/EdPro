@@ -19,10 +19,14 @@ namespace EdPro.Controllers
         }
 
         // GET: Faculties
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? id, string? name, string? edbo)
         {
-            var edProContext = _context.Faculties.Include(f => f.University);
-            return View(await edProContext.ToListAsync());
+            if(id == 0) return RedirectToAction("Universities", "Index");
+            ViewBag.UniversityId = id;
+            ViewBag.UniversityName = name;
+            ViewBag.UniversityEdbo = edbo;
+            var facultiesByUniversity = _context.Faculties.Where(f => f.UniversityId == id).Include(f=>f.University);
+            return View(await facultiesByUniversity.ToListAsync());
         }
 
         // GET: Faculties/Details/5
@@ -45,9 +49,11 @@ namespace EdPro.Controllers
         }
 
         // GET: Faculties/Create
-        public IActionResult Create()
+        public IActionResult Create(int universityId)
         {
-            ViewData["UniversityId"] = new SelectList(_context.Universities, "Id", "Edbo");
+            ViewBag.UniversityId = universityId;
+            ViewBag.UniversityName = _context.Universities.Where(c => c.Id == universityId).FirstOrDefault().Name;
+            ViewBag.UniversityEdbo = _context.Universities.Where(c => c.Id == universityId).FirstOrDefault().Edbo;
             return View();
         }
 
@@ -56,16 +62,45 @@ namespace EdPro.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,UniversityId")] Faculty faculty)
+        public async Task<IActionResult> Create(int universityId, [Bind("Id,Name,UniversityId")] Faculty faculty)
         {
-            if (ModelState.IsValid)
+            faculty.UniversityId = universityId;
+            if (IsUnique(faculty.Name, faculty.UniversityId))
             {
-                _context.Add(faculty);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                if (ModelState.IsValid)
+                {
+                    _context.Add(faculty);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction("Index", "Faculties", new
+                    {
+                        id = universityId,
+                        name = _context.Universities.Where(c => c.Id == universityId).FirstOrDefault().Name,
+                        edbo = _context.Universities.Where(c => c.Id == universityId).FirstOrDefault().Edbo
+                    });
+                }
             }
-            ViewData["UniversityId"] = new SelectList(_context.Universities, "Id", "Edbo", faculty.UniversityId);
+            else
+            {
+                ViewData["ErrorMessage"] = "Такий факультет в цьому університеті вже існує!";
+            }
+
+            //return RedirectToAction("Index", "Faculties", new
+            //{
+            //    id = universityId,
+            //    name = _context.Universities.Where(c => c.Id == universityId).FirstOrDefault().Name,
+            //    edbo = _context.Universities.Where(c => c.Id == universityId).FirstOrDefault().Edbo
+            //});
+            ViewBag.UniversityId = universityId;
+            ViewBag.UniversityName = _context.Universities.Where(c => c.Id == universityId).FirstOrDefault().Name;
+            ViewBag.UniversityEdbo = _context.Universities.Where(c => c.Id == universityId).FirstOrDefault().Edbo;
             return View(faculty);
+        }
+
+        bool IsUnique(string name, int universityId)
+        {
+            var faculties = _context.Faculties.Where(b => b.Name == name && b.UniversityId == universityId).ToList();
+            if (faculties.Count == 0) return true;
+            return false;
         }
 
         // GET: Faculties/Edit/5

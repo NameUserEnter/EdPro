@@ -19,10 +19,13 @@ namespace EdPro.Controllers
         }
 
         // GET: SpecialityCompetences
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? id, string? name)
         {
-            var edProContext = _context.SpecialityCompetences.Include(s => s.Competence).Include(s => s.Speciality);
-            return View(await edProContext.ToListAsync());
+            if (id == 0) return RedirectToAction("Specialities", "Index");
+            ViewBag.SpecialityId = id;
+            ViewBag.SpecialityName = name;
+            var specialityCompetencesBySpeciality = _context.SpecialityCompetences.Where(f => f.SpecialityId == id).Include(f => f.Competence).Include(f => f.Speciality);
+            return View(await specialityCompetencesBySpeciality.ToListAsync());
         }
 
         // GET: SpecialityCompetences/Details/5
@@ -42,14 +45,20 @@ namespace EdPro.Controllers
                 return NotFound();
             }
 
-            return View(specialityCompetence);
+            return RedirectToAction("Index", "EpSubjectCompetences", new
+            {
+                id = specialityCompetence.Id,
+                specialityId = specialityCompetence.SpecialityId,
+                competenceId = specialityCompetence.CompetenceId
+            });
         }
 
         // GET: SpecialityCompetences/Create
-        public IActionResult Create()
+        public IActionResult Create(int specialityId)
         {
+            ViewBag.SpecialityId = specialityId;
+            ViewBag.SpecialityName = _context.Specialities.Where(c => c.Id == specialityId).FirstOrDefault().Name;
             ViewData["CompetenceId"] = new SelectList(_context.Competences, "Id", "Competence1");
-            ViewData["SpecialityId"] = new SelectList(_context.Specialities, "Id", "Name");
             return View();
         }
 
@@ -58,16 +67,22 @@ namespace EdPro.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,SpecialityId,CompetenceId")] SpecialityCompetence specialityCompetence)
+        public async Task<IActionResult> Create(int specialityId, [Bind("Id,SpecialityId,CompetenceId")] SpecialityCompetence specialityCompetence)
         {
+            specialityCompetence.SpecialityId = specialityId;
             if (ModelState.IsValid)
             {
                 _context.Add(specialityCompetence);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index", "SpecialityCompetences", new
+                {
+                    id = specialityId,
+                    name = _context.Specialities.Where(c => c.Id == specialityId).FirstOrDefault().Name
+                });
             }
+            ViewBag.SpecialityId = specialityId;
+            ViewBag.SpecialityName = _context.Specialities.Where(c => c.Id == specialityId).FirstOrDefault().Name;
             ViewData["CompetenceId"] = new SelectList(_context.Competences, "Id", "Competence1", specialityCompetence.CompetenceId);
-            ViewData["SpecialityId"] = new SelectList(_context.Specialities, "Id", "Name", specialityCompetence.SpecialityId);
             return View(specialityCompetence);
         }
 
