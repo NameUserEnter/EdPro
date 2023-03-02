@@ -5,10 +5,12 @@
 }
 
 <h1>Компетентності спеціальності @ViewBag.SpecialityName:</h1>
-
+@if (User.IsInRole("admin"))
+{
 <p>
     @Html.ActionLink("Додати компетентність до спеціальності", "Create", new {SpecialityId = @ViewBag.SpecialityId}, new { @class = "btn btn-secondary" })
 </p>
+}
 <table class="table">
     <thead>
         <tr>
@@ -31,11 +33,17 @@
                 @Html.DisplayFor(modelItem => item.Speciality.Name)
             </td>
             <td>
+                    @if (User.IsInRole("admin"))
+                    {
                     <a asp-action="Edit" asp-route-id="@item.Id"><button type="button" class="btn btn-outline-info">Редагувати</button></a>
                 <p></p>
+                    }
                 <a asp-action="Details" asp-route-id="@item.Id"><button type="button" class="btn btn-outline-info">Деталі</button></a>
                 <p></p>
-                    <a asp-action="Delete" asp-route-id="@item.Id"><button type="button" class="btn btn-outline-danger">Видалити</button></a>
+                    @if (User.IsInRole("admin"))
+                    {
+                <a asp-action="Delete" asp-route-id="@item.Id"><button type="button" class="btn btn-outline-danger">Видалити</button></a>
+                    }
             </td>
         </tr>
 }

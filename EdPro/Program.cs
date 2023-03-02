@@ -11,14 +11,24 @@ builder.Configuration.GetConnectionString("DefaultConnection")
 ));
 
 builder.Services.AddControllersWithViews();
+builder.Services.AddTransient<IPasswordValidator<User>,
+        CustomPasswordValidator>(serv => new CustomPasswordValidator(6));
+
+builder.Services.AddTransient<IUserValidator<User>, CustomUserValidator>();
+
 
 builder.Services.AddDbContext<IdentityContext>(option => option.UseSqlServer(
     builder.Configuration.GetConnectionString("IdentityConnection")
     ));
 builder.Services.AddControllersWithViews();
 
-builder.Services.AddIdentity<User, IdentityRole>().AddEntityFrameworkStores<IdentityContext>().AddDefaultTokenProviders(); ;
-
+builder.Services.AddIdentity<User, IdentityRole>().AddEntityFrameworkStores<IdentityContext>().AddDefaultTokenProviders();
+builder.Services.AddAuthentication()
+                .AddGoogle(options =>
+                {
+                    options.ClientId = "1058258685917-mkuvubvmusvlle11utf1dd912bkjsv79.apps.googleusercontent.com";
+                    options.ClientSecret = "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";
+                });
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())

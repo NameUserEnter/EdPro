@@ -5,10 +5,12 @@
 }
 
 <h1>Типи компетентностей</h1>
-
+@if (User.IsInRole("admin"))
+{
 <p>
     <a asp-action="Create"><button type="button" class="btn btn-secondary">Додати тип компетентності</button></a>
 </p>
+}
 <table class="table">
     <thead>
         <tr>
@@ -25,9 +27,15 @@
                 @Html.DisplayFor(modelItem => item.CompType)
             </td>
             <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id"><button type="button" class="btn btn-outline-info">Редагувати</button></a>
-                    <a asp-action="Details" asp-route-id="@item.Id"><button type="button" class="btn btn-outline-info">Деталі</button></a>
-                    <a asp-action="Delete" asp-route-id="@item.Id"><button type="button" class="btn btn-outline-danger">Видалити</button></a>
+                    @if (User.IsInRole("admin"))
+                    {
+                <a asp-action="Edit" asp-route-id="@item.Id"><button type="button" class="btn btn-outline-info">Редагувати</button></a>
+                    }
+                <a asp-action="Details" asp-route-id="@item.Id"><button type="button" class="btn btn-outline-info">Деталі</button></a>
+                    @if (User.IsInRole("admin"))
+                    {
+                <a asp-action="Delete" asp-route-id="@item.Id"><button type="button" class="btn btn-outline-danger">Видалити</button></a>
+                    }
             </td>
         </tr>
 }
