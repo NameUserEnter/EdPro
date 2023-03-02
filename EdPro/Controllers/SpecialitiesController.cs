@@ -112,27 +112,41 @@ namespace EdPro.Controllers
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            if (IsUniqueEdit(speciality.Id, speciality.Name))
             {
-                try
+                if (ModelState.IsValid)
                 {
-                    _context.Update(speciality);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!SpecialityExists(speciality.Id))
+                    try
                     {
-                        return NotFound();
+                        _context.Update(speciality);
+                        await _context.SaveChangesAsync();
                     }
-                    else
+                    catch (DbUpdateConcurrencyException)
                     {
-                        throw;
+                        if (!SpecialityExists(speciality.Id))
+                        {
+                            return NotFound();
+                        }
+                        else
+                        {
+                            throw;
+                        }
                     }
+                    return RedirectToAction(nameof(Index));
                 }
-                return RedirectToAction(nameof(Index));
+            }
+            else
+            {
+                ViewData["ErrorMessage"] = "Така спеціальність вже додана!";
             }
             return View(speciality);
+        }
+
+        bool IsUniqueEdit(int id, string name)
+        {
+            var specialities = _context.Specialities.Where(b => b.Name == name && b.Id != id).ToList();
+            if (specialities.Count == 0) return true;
+            return false;
         }
 
         // GET: Specialities/Delete/5

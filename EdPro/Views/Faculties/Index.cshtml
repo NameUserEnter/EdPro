@@ -7,7 +7,7 @@
 <h1>@ViewBag.UniversityName, факультети:</h1>
 
 <p>
-    @Html.ActionLink("Додати факультет", "Create", new {universityId = @ViewBag.UniversityId})
+    @Html.ActionLink("Додати факультет", "Create", new {universityId = @ViewBag.UniversityId}, new { @class = "btn btn-secondary" })
 </p>
 <table class="table">
     <thead>
@@ -31,9 +31,9 @@
                 @Html.DisplayFor(modelItem => item.University.Name)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Редагувати</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Деталі</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Видалити</a>
+                    <a asp-action="Edit" asp-route-id="@item.Id"><button type="button" class="btn btn-outline-info">Редагувати</button></a>
+                    <a asp-action="Details" asp-route-id="@item.Id"><button type="button" class="btn btn-outline-info">Деталі</button></a>
+                    <a asp-action="Delete" asp-route-id="@item.Id"><button type="button" class="btn btn-outline-danger">Видалити</button></a>
             </td>
         </tr>
 }

@@ -57,13 +57,27 @@ namespace EdPro.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,ControlTypeName")] ControlType controlType)
         {
-            if (ModelState.IsValid)
+            if (IsUnique(controlType.ControlTypeName))
             {
-                _context.Add(controlType);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                if (ModelState.IsValid)
+                {
+                    _context.Add(controlType);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+            }
+            else
+            {
+                ViewData["ErrorMessage"] = "Такий тип контролю вже доданий!";
             }
             return View(controlType);
+        }
+
+        bool IsUnique(string controlTypeName)
+        {
+            var controlTypes = _context.ControlTypes.Where(b => b.ControlTypeName == controlTypeName).ToList();
+            if (controlTypes.Count == 0) return true;
+            return false;
         }
 
         // GET: ControlTypes/Edit/5
@@ -94,27 +108,41 @@ namespace EdPro.Controllers
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            if (IsUniqueEdit(controlType.Id, controlType.ControlTypeName))
             {
-                try
+                if (ModelState.IsValid)
                 {
-                    _context.Update(controlType);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ControlTypeExists(controlType.Id))
+                    try
                     {
-                        return NotFound();
+                        _context.Update(controlType);
+                        await _context.SaveChangesAsync();
                     }
-                    else
+                    catch (DbUpdateConcurrencyException)
                     {
-                        throw;
+                        if (!ControlTypeExists(controlType.Id))
+                        {
+                            return NotFound();
+                        }
+                        else
+                        {
+                            throw;
+                        }
                     }
+                    return RedirectToAction(nameof(Index));
                 }
-                return RedirectToAction(nameof(Index));
+            }
+            else
+            {
+                ViewData["ErrorMessage"] = "Такий тип контролю вже доданий!";
             }
             return View(controlType);
+        }
+
+        bool IsUniqueEdit(int id, string controlTypeName)
+        {
+            var controlTypes = _context.ControlTypes.Where(b => b.ControlTypeName == controlTypeName && b.Id != id).ToList();
+            if (controlTypes.Count == 0) return true;
+            return false;
         }
 
         // GET: ControlTypes/Delete/5

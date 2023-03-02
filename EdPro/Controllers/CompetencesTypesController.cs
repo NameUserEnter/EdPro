@@ -57,13 +57,27 @@ namespace EdPro.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,CompType")] CompetencesType competencesType)
         {
-            if (ModelState.IsValid)
+            if (IsUnique(competencesType.CompType))
             {
-                _context.Add(competencesType);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                if (ModelState.IsValid)
+                {
+                    _context.Add(competencesType);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+            }
+            else
+            {
+                ViewData["ErrorMessage"] = "Такий тип компетентності вже доданий!";
             }
             return View(competencesType);
+        }
+
+        bool IsUnique(string compType)
+        {
+            var  competencesTypes = _context.CompetencesTypes.Where(b => b.CompType == compType).ToList();
+            if (competencesTypes.Count == 0) return true;
+            return false;
         }
 
         // GET: CompetencesTypes/Edit/5
@@ -94,27 +108,41 @@ namespace EdPro.Controllers
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            if (IsUniqueEdit(competencesType.Id, competencesType.CompType))
             {
-                try
+                if (ModelState.IsValid)
                 {
-                    _context.Update(competencesType);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!CompetencesTypeExists(competencesType.Id))
+                    try
                     {
-                        return NotFound();
+                        _context.Update(competencesType);
+                        await _context.SaveChangesAsync();
                     }
-                    else
+                    catch (DbUpdateConcurrencyException)
                     {
-                        throw;
+                        if (!CompetencesTypeExists(competencesType.Id))
+                        {
+                            return NotFound();
+                        }
+                        else
+                        {
+                            throw;
+                        }
                     }
+                    return RedirectToAction(nameof(Index));
                 }
-                return RedirectToAction(nameof(Index));
+            }
+            else
+            {
+                ViewData["ErrorMessage"] = "Такий тип компетентності вже доданий!";
             }
             return View(competencesType);
+        }
+
+        bool IsUniqueEdit(int id, string compType)
+        {
+            var competencesTypes = _context.CompetencesTypes.Where(b => b.CompType == compType && b.Id != id).ToList();
+            if (competencesTypes.Count == 0) return true;
+            return false;
         }
 
         // GET: CompetencesTypes/Delete/5

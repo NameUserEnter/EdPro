@@ -19,7 +19,7 @@ namespace EdPro.Models
         [Display(Name = "Університет")]
         public int UniversityId { get; set; }
 
-
+        [Display(Name = "Університет")]
         public virtual University University { get; set; } = null!;
         public virtual ICollection<EducationProgram> EducationPrograms { get; set; }
     }

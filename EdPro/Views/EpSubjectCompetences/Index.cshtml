@@ -4,17 +4,17 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Необхідні предмети для компетентності</h1>
+<h1>Компетентності предмету "@ViewBag.SubjectName"</h1>
 
 <p>
-    @Html.ActionLink("Додати необхідний предмет", "Create", new {SpecialityCompetenceId = @ViewBag.SpecialityCompetenceId})
+    @Html.ActionLink("Додати компетентність", "Create", new {SubjectId = @ViewBag.SubjectId}, new { @class = "btn btn-secondary" })
 </p>
 <table class="table">
     <thead>
         <tr>
-@*            <th>
+            <th>
                 @Html.DisplayNameFor(model => model.SpecialityCompetence)
-            </th>*@
+            </th>
             <th>
                 @Html.DisplayNameFor(model => model.Subject)
             </th>
@@ -24,18 +24,51 @@
     <tbody>
 @foreach (var item in Model) {
         <tr>
-@*            <td>
+            <td>
                 @Html.DisplayFor(modelItem => item.SpecialityCompetence.Id)
-            </td>*@
+            </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Subject.Name)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Редагувати</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Деталі</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Видалити</a>
+                    <a asp-action="Edit" asp-route-id="@item.Id"><button type="button" class="btn btn-outline-info">Редагувати</button></a>
+                    <a asp-action="Details" asp-route-id="@item.Id"><button type="button" class="btn btn-outline-info">Деталі</button></a>
+                    <a asp-action="Delete" asp-route-id="@item.Id"><button type="button" class="btn btn-outline-danger">Видалити</button></a>
             </td>
         </tr>
 }
+    </tbody>
+</table>
+
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.SpecialityCompetence.Competence)
+            </th>
+            <th>
+                @*@Html.DisplayNameFor(model => model.SpecialityCompetence.Competence)*@
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SpecialityCompetence.Speciality)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr class="table-info">
+                <td>
+                    @Html.DisplayFor(modelItem => item.SpecialityCompetence.Id)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.SpecialityCompetence.Competence.Competence1)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.SpecialityCompetence.Speciality.Name)
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

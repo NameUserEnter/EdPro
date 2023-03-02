@@ -116,7 +116,10 @@ namespace EdPro.Controllers
             {
                 return NotFound();
             }
-            ViewData["UniversityId"] = new SelectList(_context.Universities, "Id", "Edbo", faculty.UniversityId);
+            //ViewData["UniversityId"] = new SelectList(_context.Universities, "Id", "Edbo", faculty.UniversityId);
+            ViewBag.UniversityId = faculty.UniversityId;
+            ViewBag.UniversityName = _context.Universities.Where(c => c.Id == faculty.UniversityId).FirstOrDefault().Name;
+            ViewBag.UniversityEdbo = _context.Universities.Where(c => c.Id == faculty.UniversityId).FirstOrDefault().Edbo;
             return View(faculty);
         }
 
@@ -125,35 +128,58 @@ namespace EdPro.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,UniversityId")] Faculty faculty)
+        public async Task<IActionResult> Edit(int id, int universityId, [Bind("Id,Name,UniversityId")] Faculty faculty)
         {
             if (id != faculty.Id)
             {
                 return NotFound();
             }
-
-            if (ModelState.IsValid)
+            faculty.UniversityId = universityId;
+            if (IsUniqueEdit(faculty.Id, faculty.Name, universityId))
             {
-                try
+                if (ModelState.IsValid)
                 {
-                    _context.Update(faculty);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!FacultyExists(faculty.Id))
+                    try
                     {
-                        return NotFound();
+                        _context.Update(faculty);
+                        await _context.SaveChangesAsync();
                     }
-                    else
+                    catch (DbUpdateConcurrencyException)
                     {
-                        throw;
+                        if (!FacultyExists(faculty.Id))
+                        {
+                            return NotFound();
+                        }
+                        else
+                        {
+                            throw;
+                        }
                     }
+                    //return RedirectToAction(nameof(Index));
+                    return RedirectToAction("Index", "Faculties", new
+                    {
+                        id = universityId,
+                        name = _context.Universities.Where(c => c.Id == universityId).FirstOrDefault().Name,
+                        edbo = _context.Universities.Where(c => c.Id == universityId).FirstOrDefault().Edbo
+                    });
                 }
-                return RedirectToAction(nameof(Index));
             }
-            ViewData["UniversityId"] = new SelectList(_context.Universities, "Id", "Edbo", faculty.UniversityId);
+            else
+            {
+                ViewData["ErrorMessage"] = "Такий факультет в цьому університеті вже існує!"; ;
+            }
+            //ViewData["UniversityId"] = new SelectList(_context.Universities, "Id", "Edbo", faculty.UniversityId);
+            ViewBag.UniversityId = faculty.UniversityId;
+            ViewBag.UniversityName = _context.Universities.Where(c => c.Id == faculty.UniversityId).FirstOrDefault().Name;
+            ViewBag.UniversityEdbo = _context.Universities.Where(c => c.Id == faculty.UniversityId).FirstOrDefault().Edbo;
             return View(faculty);
+        }
+
+        bool IsUniqueEdit(int id, string name, int universityId)
+        {
+            var faculties = _context.Faculties.Where(b => b.Name == name && b.UniversityId == universityId && b.Id != id).ToList();
+            if (faculties.Count == 0) return true;
+            return false;
         }
 
         // GET: Faculties/Delete/5
@@ -171,7 +197,9 @@ namespace EdPro.Controllers
             {
                 return NotFound();
             }
-
+            ViewBag.UniversityId = faculty.UniversityId;
+            ViewBag.UniversityName = _context.Universities.Where(c => c.Id == faculty.UniversityId).FirstOrDefault().Name;
+            ViewBag.UniversityEdbo = _context.Universities.Where(c => c.Id == faculty.UniversityId).FirstOrDefault().Edbo;
             return View(faculty);
         }
 
@@ -185,13 +213,27 @@ namespace EdPro.Controllers
                 return Problem("Entity set 'EdProContext.Faculties'  is null.");
             }
             var faculty = await _context.Faculties.FindAsync(id);
+            //var educatioPrograms = _context.EducationPrograms.Where(f => f.FacultyId == id).ToList();
+            //if (educatioPrograms.Any())
+            //{
+            //    foreach (var educationProgram in educatioPrograms)
+            //    {
+            //        _context.EducationPrograms.Remove(educationProgram);
+            //    }
+            //}
             if (faculty != null)
             {
                 _context.Faculties.Remove(faculty);
             }
             
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            //return RedirectToAction(nameof(Index));
+            return RedirectToAction("Index", "Faculties", new
+            {
+                id = faculty.UniversityId,
+                name = _context.Universities.Where(c => c.Id == faculty.UniversityId).FirstOrDefault().Name,
+                edbo = _context.Universities.Where(c => c.Id == faculty.UniversityId).FirstOrDefault().Edbo
+            });
         }
 
         private bool FacultyExists(int id)

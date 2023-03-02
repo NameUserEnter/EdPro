@@ -67,8 +67,9 @@ namespace EdPro.Controllers
             {
                 ViewData["ErrorMessage"] = "Рік впровадження старіший за 1960!";
             }
-            else if(IsUnique(educationProgram.SpecialityId, educationProgram.EdPrTypeId, educationProgram.FacultyId, educationProgram.ImplementationDate))
-            {
+            else 
+            { 
+
                 if (ModelState.IsValid)
                 {
                     _context.Add(educationProgram);
@@ -76,22 +77,19 @@ namespace EdPro.Controllers
                     return RedirectToAction(nameof(Index));
                 }
             }
-            else
-            {
-                ViewData["ErrorMessage"] = "Навчальна програма вже додана!";
-            }
+
             ViewData["EdPrTypeId"] = new SelectList(_context.EdProgramTypes, "Id", "TypeName", educationProgram.EdPrTypeId);
             ViewData["FacultyId"] = new SelectList(_context.Faculties, "Id", "Name", educationProgram.FacultyId);
             ViewData["SpecialityId"] = new SelectList(_context.Specialities, "Id", "Name", educationProgram.SpecialityId);
             return View(educationProgram);
         }
 
-        bool IsUnique(int specialityId, int edPrTypeId, int facultyId, DateTime implementationDate)
-        {
-            var educationPrograms = _context.EducationPrograms.Where(b => b.SpecialityId == specialityId && b.FacultyId == facultyId && b.EdPrTypeId == edPrTypeId && b.ImplementationDate == implementationDate).ToList();
-            if (educationPrograms.Count == 0) return true;
-            return false;
-        }
+        //bool IsUnique(int specialityId, int edPrTypeId, int facultyId, DateTime implementationDate)
+        //{
+        //    var educationPrograms = _context.EducationPrograms.Where(b => b.SpecialityId == specialityId && b.FacultyId == facultyId && b.EdPrTypeId == edPrTypeId && b.ImplementationDate == implementationDate).ToList();
+        //    if (educationPrograms.Count == 0) return true;
+        //    return false;
+        //}
 
         public bool Time(DateTime time)
         {
@@ -131,25 +129,32 @@ namespace EdPro.Controllers
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            if (!Time(educationProgram.ImplementationDate))
             {
-                try
+                ViewData["ErrorMessage"] = "Рік впровадження старіший за 1960!";
+            }
+            else
+            {
+                if (ModelState.IsValid)
                 {
-                    _context.Update(educationProgram);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!EducationProgramExists(educationProgram.Id))
+                    try
                     {
-                        return NotFound();
+                        _context.Update(educationProgram);
+                        await _context.SaveChangesAsync();
                     }
-                    else
+                    catch (DbUpdateConcurrencyException)
                     {
-                        throw;
+                        if (!EducationProgramExists(educationProgram.Id))
+                        {
+                            return NotFound();
+                        }
+                        else
+                        {
+                            throw;
+                        }
                     }
+                    return RedirectToAction(nameof(Index));
                 }
-                return RedirectToAction(nameof(Index));
             }
             ViewData["EdPrTypeId"] = new SelectList(_context.EdProgramTypes, "Id", "TypeName", educationProgram.EdPrTypeId);
             ViewData["FacultyId"] = new SelectList(_context.Faculties, "Id", "Name", educationProgram.FacultyId);
@@ -188,6 +193,15 @@ namespace EdPro.Controllers
                 return Problem("Entity set 'EdProContext.EducationPrograms'  is null.");
             }
             var educationProgram = await _context.EducationPrograms.FindAsync(id);
+            
+            var subjects = _context.Subjects.Where(f => f.EprogramId == id);
+            if (subjects.Any())
+            {
+                foreach (var subject in subjects)
+                {
+                    _context.Subjects.Remove(subject);
+                }
+            }
             if (educationProgram != null)
             {
                 _context.EducationPrograms.Remove(educationProgram);
