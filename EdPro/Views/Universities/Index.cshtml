@@ -5,10 +5,12 @@
 }
 
 <h1>Університети</h1>
-
+@if (User.IsInRole("admin"))
+{
 <p>
     <a asp-action="Create"><button type="button" class="btn btn-secondary">Додати університет</button></a>
 </p>
+}
 <table class="table">
     <thead>
         <tr>
@@ -31,11 +33,41 @@
                 @Html.DisplayFor(modelItem => item.Edbo)
             </td>
             <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id"><button type="button" class="btn btn-outline-info">Редагувати</button></a>
-                    <a asp-action="Details" asp-route-id="@item.Id"><button type="button" class="btn btn-outline-info">Факультети</button></a>
-                    <a asp-action="Delete" asp-route-id="@item.Id"><button type="button" class="btn btn-outline-danger">Видалити</button></a>
+                    @if (User.IsInRole("admin"))
+                    {
+                 <a asp-action="Edit" asp-route-id="@item.Id"><button type="button" class="btn btn-outline-info">Редагувати</button></a>
+                    }
+                <a asp-action="Details" asp-route-id="@item.Id"><button type="button" class="btn btn-outline-info">Факультети</button></a>
+                    @if (User.IsInRole("admin"))
+                    {
+                <a asp-action="Delete" asp-route-id="@item.Id"><button type="button" class="btn btn-outline-danger">Видалити</button></a>
+                    }
             </td>
         </tr>
 }
     </tbody>
 </table>
+<div class="container">
+    <div id="chart1"></div>
+</div>
+@section scripts{
+    <script type "text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script>
+        google.charts.load('current', { 'packages': ['corechart'] });
+        google.charts.setOnLoadCallback(drawChart);
+
+            function drawChart() {
+
+                $.get('/api/Chart/JsonData', function(JsonData) {
+                    data = google.visualization.arrayToDataTable(JsonData, false);
+                    var option = {
+                    title: "Співвідношення кількості факультетів в університетах",
+                        width: 500,
+                        height: 400
+                    };
+                    chart = new google.visualization.PieChart(document.getElementById('chart1'));
+                    chart.draw(data, option);
+                })
+            }
+    </script>
+}

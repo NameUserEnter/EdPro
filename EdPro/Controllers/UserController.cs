@@ -4,9 +4,14 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using EdPro.Models;
 using EdPro.ViewModel;
+using Microsoft.AspNetCore.Authorization;
+using System.Data;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace EdPro.Controllers
 {
+    //[Authorize(Roles = "admin")]
     public class UserController : Controller
     {
         UserManager<User> _userManager;
@@ -18,11 +23,18 @@ namespace EdPro.Controllers
 
         public IActionResult Index() => View(_userManager.Users.ToList());
 
-        public IActionResult Create() => View();
+        //public IActionResult Create() => View();
+        public IActionResult Create(string? f)
+        {
+            ViewBag.F = f;
+            return View();
+        }
 
         [HttpPost]
         public async Task<IActionResult> Create(CreateUserViewModel model)
         {
+            if (IsUnique(model.Email) == false)
+                return RedirectToAction("Create", "User", new { f = "Користувач з таким email вже існує" });
             if (ModelState.IsValid)
             {
                 User user = new User { Email = model.Email, UserName = model.Email, Year = model.Year };
@@ -41,7 +53,12 @@ namespace EdPro.Controllers
             }
             return View(model);
         }
-
+        bool IsUnique(string email)
+        {
+            var q1 = _userManager.FindByEmailAsync(email);
+            if (q1 == null) { return true; }
+            return false;
+        }
         public async Task<IActionResult> Edit(string id)
         {
             User user = await _userManager.FindByIdAsync(id);

@@ -5,10 +5,12 @@
 }
 
 <h1>@ViewBag.UniversityName, факультети:</h1>
-
+@if (User.IsInRole("admin"))
+{
 <p>
     @Html.ActionLink("Додати факультет", "Create", new {universityId = @ViewBag.UniversityId}, new { @class = "btn btn-secondary" })
 </p>
+}
 <table class="table">
     <thead>
         <tr>
@@ -31,9 +33,15 @@
                 @Html.DisplayFor(modelItem => item.University.Name)
             </td>
             <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id"><button type="button" class="btn btn-outline-info">Редагувати</button></a>
-                    <a asp-action="Details" asp-route-id="@item.Id"><button type="button" class="btn btn-outline-info">Деталі</button></a>
-                    <a asp-action="Delete" asp-route-id="@item.Id"><button type="button" class="btn btn-outline-danger">Видалити</button></a>
+                    @if (User.IsInRole("admin"))
+                    {
+                <a asp-action="Edit" asp-route-id="@item.Id"><button type="button" class="btn btn-outline-info">Редагувати</button></a>
+                    }
+                <a asp-action="Details" asp-route-id="@item.Id"><button type="button" class="btn btn-outline-info">Деталі</button></a>
+                    @if (User.IsInRole("admin"))
+                    {
+                <a asp-action="Delete" asp-route-id="@item.Id"><button type="button" class="btn btn-outline-danger">Видалити</button></a>
+                    }
             </td>
         </tr>
 }

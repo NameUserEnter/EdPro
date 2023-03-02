@@ -4,11 +4,13 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Компетентності предмету "@ViewBag.SubjectName"</h1>
-
+<h1>Необхідні предмети для компетентності</h1>
+@if (User.IsInRole("admin"))
+{
 <p>
     @Html.ActionLink("Додати компетентність", "Create", new {SubjectId = @ViewBag.SubjectId}, new { @class = "btn btn-secondary" })
 </p>
+}
 <table class="table">
     <thead>
         <tr>
@@ -31,10 +33,16 @@
                 @Html.DisplayFor(modelItem => item.Subject.Name)
             </td>
             <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id"><button type="button" class="btn btn-outline-info">Редагувати</button></a>
+                    @if (User.IsInRole("admin"))
+                    {
+                        <a asp-action="Edit" asp-route-id="@item.Id"><button type="button" class="btn btn-outline-info">Редагувати</button></a>
+                    }
                     <a asp-action="Details" asp-route-id="@item.Id"><button type="button" class="btn btn-outline-info">Деталі</button></a>
-                    <a asp-action="Delete" asp-route-id="@item.Id"><button type="button" class="btn btn-outline-danger">Видалити</button></a>
-            </td>
+                    @if (User.IsInRole("admin"))
+                    {
+                        <a asp-action="Delete" asp-route-id="@item.Id"><button type="button" class="btn btn-outline-danger">Видалити</button></a>
+                    }
+                </td>
         </tr>
 }
     </tbody>
