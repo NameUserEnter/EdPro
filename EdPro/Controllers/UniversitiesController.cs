@@ -108,27 +108,41 @@ namespace EdPro.Controllers
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            if (IsUniqueEdit(university.Id, university.Name))
             {
-                try
+                if (ModelState.IsValid)
                 {
-                    _context.Update(university);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!UniversityExists(university.Id))
+                    try
                     {
-                        return NotFound();
+                        _context.Update(university);
+                        await _context.SaveChangesAsync();
                     }
-                    else
+                    catch (DbUpdateConcurrencyException)
                     {
-                        throw;
+                        if (!UniversityExists(university.Id))
+                        {
+                            return NotFound();
+                        }
+                        else
+                        {
+                            throw;
+                        }
                     }
+                    return RedirectToAction(nameof(Index));
                 }
-                return RedirectToAction(nameof(Index));
+            }
+            else
+            {
+                ViewData["ErrorMessage"] = "Такий університет вже доданий!";
             }
             return View(university);
+        }
+
+        bool IsUniqueEdit(int id, string name)
+        {
+            var universities = _context.Universities.Where(b => b.Name == name && b.Id != id).ToList();
+            if (universities.Count == 0) return true;
+            return false;
         }
 
         // GET: Universities/Delete/5
@@ -159,11 +173,51 @@ namespace EdPro.Controllers
                 return Problem("Entity set 'EdProContext.Universities'  is null.");
             }
             var university = await _context.Universities.FindAsync(id);
+            //var faculties = _context.Faculties.Where(b => b.UniversityId == id).ToList();
+            //if (faculties.Any())
+            //{
+            //    foreach (var faculty in faculties)
+            //    {
+            //        var educationPrograms = _context.EducationPrograms.Where(f => f.FacultyId == faculty.Id).ToList();
+            //        if (educationPrograms.Any())
+            //        {
+            //            foreach(var educationProgram in educationPrograms)
+            //            {
+            //                var subjects = _context.Subjects.Where(f => f.EprogramId == educationProgram.Id).ToList();
+            //                if (subjects.Any())
+            //                {
+            //                    foreach (var subject in subjects) 
+            //                    {
+            //                        var epSubjectLoucomes = _context.EpSubjectLoutcomes.Where(f => f.SubjectId == subject.Id).ToList();
+            //                        if (epSubjectLoucomes.Any())
+            //                        {
+            //                            foreach (var epSubjectLoucome in epSubjectLoucomes)
+            //                            {
+            //                                _context.EpSubjectLoutcomes.Remove(epSubjectLoucome);
+            //                            }
+            //                        }
+            //                        var epSubjectCompetences = _context.EpSubjectCompetences.Where(f => f.SubjectId == subject.Id).ToList();
+            //                        if (epSubjectCompetences.Any())
+            //                        {
+            //                            foreach (var epSubjectCompetence in epSubjectCompetences)
+            //                            {
+            //                                _context.EpSubjectCompetences.Remove(epSubjectCompetence);
+            //                            }
+            //                        }
+            //                        _context.Subjects.Remove(subject);
+            //                    }
+            //                }
+            //                _context.EducationPrograms.Remove(educationProgram);
+            //            }
+            //        }
+            //        _context.Faculties.Remove(faculty);
+            //    }
+            //}
             if (university != null)
             {
                 _context.Universities.Remove(university);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }

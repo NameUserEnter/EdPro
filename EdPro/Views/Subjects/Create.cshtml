@@ -50,7 +50,7 @@
     <a asp-action="Index">Повернутися</a>
 </div>*@
 
-@Html.ActionLink("Повернутись","Index", new {id = ViewBag.EducationProgramId, name = ViewBag.EducationProgramName, specialityId = ViewBag.EducationProgramSpecialityId, edbo = ViewBag.EducationProgramEdbo, edPrTypeId = ViewBag.EducationProgramEdPrTypeId, facultyId = ViewBag.EducationProgramFacultyId, implementationDate = ViewBag.EducationProgramImplementationDate})
+@Html.ActionLink("Повернутись","Index", new {id = ViewBag.EducationProgramId, name = ViewBag.EducationProgramName, specialityId = ViewBag.EducationProgramSpecialityId, edbo = ViewBag.EducationProgramEdbo, edPrTypeId = ViewBag.EducationProgramEdPrTypeId, facultyId = ViewBag.EducationProgramFacultyId, implementationDate = ViewBag.EducationProgramImplementationDate}, new { @class = "btn btn-secondary" })
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

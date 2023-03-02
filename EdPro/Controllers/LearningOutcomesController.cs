@@ -41,13 +41,15 @@ namespace EdPro.Controllers
                 return NotFound();
             }
 
-            return RedirectToAction("Index", "EpSubjectLoutcomes", new
-            {
-                id = learningOutcome.Id,
-                learningOutcome1 = learningOutcome.LearningOutcome1,
-                loname = learningOutcome.Loname,
-                specialtyId = learningOutcome.SpecialityId
-            });
+            return View(learningOutcome);
+
+            //return RedirectToAction("Index", "EpSubjectLoutcomes", new
+            //{
+            //    id = learningOutcome.Id,
+            //    learningOutcome1 = learningOutcome.LearningOutcome1,
+            //    loname = learningOutcome.Loname,
+            //    specialtyId = learningOutcome.SpecialityId
+            //});
         }
 
         // GET: LearningOutcomes/Create
@@ -64,7 +66,7 @@ namespace EdPro.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,LearningOutcome1,Loname,SpecialityId")] LearningOutcome learningOutcome)
         {
-            if (IsUnique(learningOutcome.LearningOutcome1, learningOutcome.Loname, learningOutcome.SpecialityId))
+            if (IsUnique(learningOutcome.Loname, learningOutcome.SpecialityId))
             {
                 if (ModelState.IsValid)
                 {
@@ -81,7 +83,7 @@ namespace EdPro.Controllers
             return View(learningOutcome);
         }
 
-        bool IsUnique(string learningOutcome, string loname, int specialityId)
+        bool IsUnique(string loname, int specialityId)
         {
             var learningOutcomes = _context.LearningOutcomes.Where(b => b.SpecialityId == specialityId && b.Loname == loname).ToList();
             if (learningOutcomes.Count == 0) return true;
@@ -117,28 +119,42 @@ namespace EdPro.Controllers
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            if (IsUniqueEdit(learningOutcome.Id, learningOutcome.Loname, learningOutcome.SpecialityId))
             {
-                try
+                if (ModelState.IsValid)
                 {
-                    _context.Update(learningOutcome);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!LearningOutcomeExists(learningOutcome.Id))
+                    try
                     {
-                        return NotFound();
+                        _context.Update(learningOutcome);
+                        await _context.SaveChangesAsync();
                     }
-                    else
+                    catch (DbUpdateConcurrencyException)
                     {
-                        throw;
+                        if (!LearningOutcomeExists(learningOutcome.Id))
+                        {
+                            return NotFound();
+                        }
+                        else
+                        {
+                            throw;
+                        }
                     }
+                    return RedirectToAction(nameof(Index));
                 }
-                return RedirectToAction(nameof(Index));
+            }
+            else
+            {
+                ViewData["ErrorMessage"] = "Такий навчальний результат в цій спеціальності є!";
             }
             ViewData["SpecialityId"] = new SelectList(_context.Specialities, "Id", "Name", learningOutcome.SpecialityId);
             return View(learningOutcome);
+        }
+
+        bool IsUniqueEdit(int id, string loname, int specialityId)
+        {
+            var learningOutcomes = _context.LearningOutcomes.Where(b => b.SpecialityId == specialityId && b.Loname == loname && b.Id != id).ToList();
+            if (learningOutcomes.Count == 0) return true;
+            return false;
         }
 
         // GET: LearningOutcomes/Delete/5
@@ -170,6 +186,14 @@ namespace EdPro.Controllers
                 return Problem("Entity set 'EdProContext.LearningOutcomes'  is null.");
             }
             var learningOutcome = await _context.LearningOutcomes.FindAsync(id);
+            var epSubjectLoutcomes = _context.EpSubjectLoutcomes.Where(f => f.LearningOutcomeId == learningOutcome.Id);
+            if(epSubjectLoutcomes.Any())
+            {
+                foreach(var epSubjectOutcome in epSubjectLoutcomes)
+                {
+                    _context.EpSubjectLoutcomes.Remove(epSubjectOutcome);
+                }
+            }
             if (learningOutcome != null)
             {
                 _context.LearningOutcomes.Remove(learningOutcome);

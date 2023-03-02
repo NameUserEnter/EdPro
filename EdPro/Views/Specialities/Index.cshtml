@@ -7,7 +7,7 @@
 <h1>Спеціальності</h1>
 
 <p>
-    <a asp-action="Create">Додати спеціальність</a>
+    <a asp-action="Create"><button type="button" class="btn btn-secondary">Додати спеціальність</button></a>
 </p>
 <table class="table">
     <thead>
@@ -25,9 +25,9 @@
                 @Html.DisplayFor(modelItem => item.Name)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Редагувати</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Компетентності</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Видалити</a>
+                    <a asp-action="Edit" asp-route-id="@item.Id"><button type="button" class="btn btn-outline-info">Редагувати</button></a> 
+                    <a asp-action="Details" asp-route-id="@item.Id"><button type="button" class="btn btn-outline-info">Компетентності</button></a>
+                    <a asp-action="Delete" asp-route-id="@item.Id"><button type="button" class="btn btn-outline-danger">Видалити</button></a>
             </td>
         </tr>
 }
