@@ -53,7 +53,40 @@ namespace EdPro.Controllers
                 return NotFound();
             }
 
-            return View(subject);
+            return RedirectToAction("Index", "EpSubjectLoutcomes", new
+            {
+                id = subject.Id,
+                name = subject.Name,
+                eprogramId = subject.EprogramId,
+                credit = subject.Credit,
+                controlId = subject.ControlId
+            });
+        }
+
+        public async Task<IActionResult> Competences(int? id)
+        {
+            if (id == null || _context.Subjects == null)
+            {
+                return NotFound();
+            }
+
+            var subject = await _context.Subjects
+                .Include(s => s.Control)
+                .Include(s => s.Eprogram)
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (subject == null)
+            {
+                return NotFound();
+            }
+
+            return RedirectToAction("Index", "EpSubjectCompetences", new
+            {
+                id = subject.Id,
+                name = subject.Name,
+                eprogramId = subject.EprogramId,
+                credit = subject.Credit,
+                controlId = subject.ControlId
+            });
         }
 
         // GET: Subjects/Create
@@ -134,7 +167,14 @@ namespace EdPro.Controllers
                 return NotFound();
             }
             ViewData["ControlId"] = new SelectList(_context.ControlTypes, "Id", "ControlTypeName", subject.ControlId);
-            ViewData["EprogramId"] = new SelectList(_context.EducationPrograms, "Id", "Edbo", subject.EprogramId);
+            //ViewData["EprogramId"] = new SelectList(_context.EducationPrograms, "Id", "Edbo", subject.EprogramId);
+            ViewBag.EducationProgramId = subject.EprogramId;
+            ViewBag.EducationProgramName = _context.EducationPrograms.Where(c => c.Id == subject.EprogramId).FirstOrDefault().Name;
+            ViewBag.EducationProgramSpecialityId = _context.EducationPrograms.Where(c => c.Id == subject.EprogramId).FirstOrDefault().SpecialityId;
+            ViewBag.EducationProgramEdbo = _context.EducationPrograms.Where(c => c.Id == subject.EprogramId).FirstOrDefault().Edbo;
+            ViewBag.EducationProgramEdPrTypeId = _context.EducationPrograms.Where(c => c.Id == subject.EprogramId).FirstOrDefault().EdPrTypeId;
+            ViewBag.EducationProgramFacultyId = _context.EducationPrograms.Where(c => c.Id == subject.EprogramId).FirstOrDefault().FacultyId;
+            ViewBag.EducationProgramImplementationDate = _context.EducationPrograms.Where(c => c.Id == subject.EprogramId).FirstOrDefault().ImplementationDate;
             return View(subject);
         }
 
@@ -143,36 +183,67 @@ namespace EdPro.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,EprogramId,Credit,ControlId")] Subject subject)
+        public async Task<IActionResult> Edit(int id, int educationProgramId, [Bind("Id,Name,EprogramId,Credit,ControlId")] Subject subject)
         {
             if (id != subject.Id)
             {
                 return NotFound();
             }
-
-            if (ModelState.IsValid)
+            subject.EprogramId = educationProgramId;
+            if (IsUniqueEdit(subject.Id, subject.Name, educationProgramId)) 
             {
-                try
+                if (ModelState.IsValid)
                 {
-                    _context.Update(subject);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!SubjectExists(subject.Id))
+                    try
                     {
-                        return NotFound();
+                        _context.Update(subject);
+                        await _context.SaveChangesAsync();
                     }
-                    else
+                    catch (DbUpdateConcurrencyException)
                     {
-                        throw;
+                        if (!SubjectExists(subject.Id))
+                        {
+                            return NotFound();
+                        }
+                        else
+                        {
+                            throw;
+                        }
                     }
-                }
-                return RedirectToAction(nameof(Index));
+                    //return RedirectToAction(nameof(Index));
+                    return RedirectToAction("Index", "Subjects", new
+                    {
+                        id = educationProgramId,
+                        name = _context.EducationPrograms.Where(c => c.Id == educationProgramId).FirstOrDefault().Name,
+                        specialityId = _context.EducationPrograms.Where(c => c.Id == educationProgramId).FirstOrDefault().SpecialityId,
+                        edbo = _context.EducationPrograms.Where(c => c.Id == educationProgramId).FirstOrDefault().Edbo,
+                        edPrTypeId = _context.EducationPrograms.Where(c => c.Id == educationProgramId).FirstOrDefault().EdPrTypeId,
+                        facultyId = _context.EducationPrograms.Where(c => c.Id == educationProgramId).FirstOrDefault().FacultyId,
+                        implementationDate = _context.EducationPrograms.Where(c => c.Id == educationProgramId).FirstOrDefault().ImplementationDate
+                    });
+                } 
+            }
+            else
+            {
+                ViewData["ErrorMessage"] = "Такий предмет в цій навчальній програмі вже є!";
             }
             ViewData["ControlId"] = new SelectList(_context.ControlTypes, "Id", "ControlTypeName", subject.ControlId);
-            ViewData["EprogramId"] = new SelectList(_context.EducationPrograms, "Id", "Edbo", subject.EprogramId);
+            //ViewData["EprogramId"] = new SelectList(_context.EducationPrograms, "Id", "Edbo", subject.EprogramId);
+            ViewBag.EducationProgramId = subject.EprogramId;
+            ViewBag.EducationProgramName = _context.EducationPrograms.Where(c => c.Id == subject.EprogramId).FirstOrDefault().Name;
+            ViewBag.EducationProgramSpecialityId = _context.EducationPrograms.Where(c => c.Id == subject.EprogramId).FirstOrDefault().SpecialityId;
+            ViewBag.EducationProgramEdbo = _context.EducationPrograms.Where(c => c.Id == subject.EprogramId).FirstOrDefault().Edbo;
+            ViewBag.EducationProgramEdPrTypeId = _context.EducationPrograms.Where(c => c.Id == subject.EprogramId).FirstOrDefault().EdPrTypeId;
+            ViewBag.EducationProgramFacultyId = _context.EducationPrograms.Where(c => c.Id == subject.EprogramId).FirstOrDefault().FacultyId;
+            ViewBag.EducationProgramImplementationDate = _context.EducationPrograms.Where(c => c.Id == subject.EprogramId).FirstOrDefault().ImplementationDate;
             return View(subject);
+        }
+
+        bool IsUniqueEdit(int id, string name, int eProgramId)
+        {
+            var subjects = _context.Subjects.Where(b => b.Name == name && b.EprogramId == eProgramId && b.Id != id).ToList();
+            if (subjects.Count == 0) return true;
+            return false;
         }
 
         // GET: Subjects/Delete/5
@@ -193,6 +264,13 @@ namespace EdPro.Controllers
                 return NotFound();
             }
 
+            ViewBag.EducationProgramId = subject.EprogramId;
+            ViewBag.EducationProgramName = _context.EducationPrograms.Where(c => c.Id == subject.EprogramId).FirstOrDefault().Name;
+            ViewBag.EducationProgramSpecialityId = _context.EducationPrograms.Where(c => c.Id == subject.EprogramId).FirstOrDefault().SpecialityId;
+            ViewBag.EducationProgramEdbo = _context.EducationPrograms.Where(c => c.Id == subject.EprogramId).FirstOrDefault().Edbo;
+            ViewBag.EducationProgramEdPrTypeId = _context.EducationPrograms.Where(c => c.Id == subject.EprogramId).FirstOrDefault().EdPrTypeId;
+            ViewBag.EducationProgramFacultyId = _context.EducationPrograms.Where(c => c.Id == subject.EprogramId).FirstOrDefault().FacultyId;
+            ViewBag.EducationProgramImplementationDate = _context.EducationPrograms.Where(c => c.Id == subject.EprogramId).FirstOrDefault().ImplementationDate;
             return View(subject);
         }
 
@@ -212,7 +290,18 @@ namespace EdPro.Controllers
             }
             
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            //return RedirectToAction(nameof(Index));
+            var educationProgramId = subject.EprogramId;
+            return RedirectToAction("Index", "Subjects", new
+            {
+                id = educationProgramId,
+                name = _context.EducationPrograms.Where(c => c.Id == educationProgramId).FirstOrDefault().Name,
+                specialityId = _context.EducationPrograms.Where(c => c.Id == educationProgramId).FirstOrDefault().SpecialityId,
+                edbo = _context.EducationPrograms.Where(c => c.Id == educationProgramId).FirstOrDefault().Edbo,
+                edPrTypeId = _context.EducationPrograms.Where(c => c.Id == educationProgramId).FirstOrDefault().EdPrTypeId,
+                facultyId = _context.EducationPrograms.Where(c => c.Id == educationProgramId).FirstOrDefault().FacultyId,
+                implementationDate = _context.EducationPrograms.Where(c => c.Id == educationProgramId).FirstOrDefault().ImplementationDate
+            });
         }
 
         private bool SubjectExists(int id)

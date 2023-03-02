@@ -4,9 +4,9 @@
     ViewData["Title"] = "Create";
 }
 
-<h1>Create</h1>
+<h1>Додавання компетентності до спеціальності</h1>
 
-<h4>SpecialityCompetence</h4>
+<h4>Компетентність</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -23,16 +23,24 @@
 
             <input type="hidden" value="@ViewBag.SpecialityId" name="SpecialityId" />
 
+            <p></p>
+
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="Додати" class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
 
-<div>
+@*<div>
     <a asp-action="Index">Back to List</a>
+</div>*@
+
+<div>
+    <p class="text-danger">@ViewData["ErrorMessage"]</p>
 </div>
+
+@Html.ActionLink("Повернутись","Index", new {id = ViewBag.SpecialityId, name = ViewBag.SpecialityName}, new { @class = "btn btn-secondary" })
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

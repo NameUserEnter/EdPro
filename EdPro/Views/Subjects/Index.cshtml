@@ -7,9 +7,9 @@
 <h1>@ViewBag.EducationProgramName, предмети:</h1>
 @if (User.IsInRole("admin"))
 {
-    <p>
-        @Html.ActionLink("Додати предмет", "Create", new {educationProgramId = @ViewBag.EducationProgramId})
-    </p>
+<p>
+    @Html.ActionLink("Додати предмет", "Create", new {educationProgramId = @ViewBag.EducationProgramId}, new { @class = "btn btn-secondary" })
+</p>
 }
 <table class="table">
     <thead>
@@ -47,12 +47,13 @@
             <td>
                     @if (User.IsInRole("admin"))
                     {
-                <a asp-action="Edit" asp-route-id="@item.Id">Редагувати</a> 
+                <a asp-action="Edit" asp-route-id="@item.Id"><button type="button" class="btn btn-outline-info">Редагувати</button></a>
                     }
-                <a asp-action="Details" asp-route-id="@item.Id">Деталі</a> 
+                <a asp-action="Details" asp-route-id="@item.Id"><button type="button" class="btn btn-outline-info">Навчальні результати</button></a>
+                <a asp-action="Competences" asp-route-id="@item.Id"><button type="button" class="btn btn-outline-info">Компетентності</button></a>
                     @if (User.IsInRole("admin"))
                     {
-                <a asp-action="Delete" asp-route-id="@item.Id">Видалити</a>
+                a asp-action="Delete" asp-route-id="@item.Id"><button type="button" class="btn btn-outline-danger">Видалити</button></a>
                     }
             </td>
         </tr>

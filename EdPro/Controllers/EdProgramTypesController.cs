@@ -61,13 +61,27 @@ namespace EdPro.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,TypeName")] EdProgramType edProgramType)
         {
-            if (ModelState.IsValid)
+            if (IsUnique(edProgramType.TypeName))
             {
-                _context.Add(edProgramType);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                if (ModelState.IsValid)
+                {
+                    _context.Add(edProgramType);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+            }
+            else
+            {
+                ViewData["ErrorMessage"] = "Такий тип освітньої програм вже доданий!";
             }
             return View(edProgramType);
+        }
+
+        bool IsUnique(string typeName)
+        {
+            var edProgramTypes = _context.EdProgramTypes.Where(b => b.TypeName == typeName).ToList();
+            if (edProgramTypes.Count == 0) return true;
+            return false;
         }
 
         // GET: EdProgramTypes/Edit/5
@@ -99,27 +113,41 @@ namespace EdPro.Controllers
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            if (IsUniqueEdit(edProgramType.Id, edProgramType.TypeName))
             {
-                try
+                if (ModelState.IsValid)
                 {
-                    _context.Update(edProgramType);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!EdProgramTypeExists(edProgramType.Id))
+                    try
                     {
-                        return NotFound();
+                        _context.Update(edProgramType);
+                        await _context.SaveChangesAsync();
                     }
-                    else
+                    catch (DbUpdateConcurrencyException)
                     {
-                        throw;
+                        if (!EdProgramTypeExists(edProgramType.Id))
+                        {
+                            return NotFound();
+                        }
+                        else
+                        {
+                            throw;
+                        }
                     }
+                    return RedirectToAction(nameof(Index));
                 }
-                return RedirectToAction(nameof(Index));
+            }
+            else
+            {
+                ViewData["ErrorMessage"] = "Такий тип освітньої програм вже доданий!";
             }
             return View(edProgramType);
+        }
+
+        bool IsUniqueEdit(int id, string typeName)
+        {
+            var edProgramTypes = _context.EdProgramTypes.Where(b => b.TypeName == typeName && b.Id != id).ToList();
+            if (edProgramTypes.Count == 0) return true;
+            return false;
         }
 
         // GET: EdProgramTypes/Delete/5

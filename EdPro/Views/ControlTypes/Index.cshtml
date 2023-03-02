@@ -7,9 +7,9 @@
 <h1>Типи контролю</h1>
 @if (User.IsInRole("admin"))
 {
-    <p>
-        <a asp-action="Create">Додати тип контролю</a>
-    </p>
+<p>
+    <a asp-action="Create"><button type="button" class="btn btn-secondary">Додати тип контролю</button></a>
+</p>
 }
 <table class="table">
     <thead>
@@ -29,12 +29,12 @@
             <td>
                     @if (User.IsInRole("admin"))
                     {
-                <a asp-action="Edit" asp-route-id="@item.Id">Редагувати</a> 
+                 <a asp-action="Edit" asp-route-id="@item.Id"><button type="button" class="btn btn-outline-info">Редагувати</button></a>
                     }
-                <a asp-action="Details" asp-route-id="@item.Id">Деталі</a> 
+                <a asp-action="Details" asp-route-id="@item.Id"><button type="button" class="btn btn-outline-info">Деталі</button></a>
                     @if (User.IsInRole("admin"))
                     {
-                <a asp-action="Delete" asp-route-id="@item.Id">Видалити</a>
+                 <a asp-action="Delete" asp-route-id="@item.Id"><button type="button" class="btn btn-outline-danger">Видалити</button></a>
                     }
             </td>
         </tr>

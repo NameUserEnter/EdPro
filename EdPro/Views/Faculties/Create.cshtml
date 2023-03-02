@@ -42,7 +42,7 @@
 </div>*@
 
 
-@Html.ActionLink("Повернутись","Index", new {id = ViewBag.UniversityId, name = ViewBag.UniversityName, edbo = ViewBag.UniversityEdbo})
+@Html.ActionLink("Повернутись","Index", new {id = ViewBag.UniversityId, name = ViewBag.UniversityName, edbo = ViewBag.UniversityEdbo}, new { @class = "btn btn-secondary" })
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
