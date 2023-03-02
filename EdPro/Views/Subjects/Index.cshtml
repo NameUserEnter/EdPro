@@ -53,7 +53,7 @@
                 <a asp-action="Competences" asp-route-id="@item.Id"><button type="button" class="btn btn-outline-info">Компетентності</button></a>
                     @if (User.IsInRole("admin"))
                     {
-                a asp-action="Delete" asp-route-id="@item.Id"><button type="button" class="btn btn-outline-danger">Видалити</button></a>
+                <a asp-action="Delete" asp-route-id="@item.Id"><button type="button" class="btn btn-outline-danger">Видалити</button></a>
                     }
             </td>
         </tr>
