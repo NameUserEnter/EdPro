@@ -13,6 +13,10 @@ namespace EdPro
             {
                 await roleManager.CreateAsync(new IdentityRole("admin"));
             }
+            if (await roleManager.FindByNameAsync("worker") == null)
+            {
+                await roleManager.CreateAsync(new IdentityRole("worker"));
+            }
             if (await roleManager.FindByNameAsync("user") == null)
             {
                 await roleManager.CreateAsync(new IdentityRole("user"));

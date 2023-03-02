@@ -5,10 +5,12 @@
 }
 
 <h1>Навчальні програми</h1>
-
-<p>
-    <a asp-action="Create">Додати навчальну програму</a>
-</p>
+@if (User.IsInRole("admin") && User.IsInRole("worker"))
+{
+    <p>
+        <a asp-action="Create">Додати навчальну програму</a>
+    </p>
+}
 <table class="table">
     <thead>
         <tr>
@@ -55,10 +57,16 @@
                 @Html.DisplayFor(modelItem => item.Speciality.Name)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Редагувати</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Предмети</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Видалити</a>
-            </td>
+                    @if (User.IsInRole("admin") && User.IsInRole("worker"))
+                    {
+                        <a asp-action="Edit" asp-route-id="@item.Id">Редагувати</a>
+                    }
+                    <a asp-action="Details" asp-route-id="@item.Id">Предмети</a>
+                    @if (User.IsInRole("admin") && User.IsInRole("admin"))
+                    {
+                        <a asp-action="Delete" asp-route-id="@item.Id">Видалити</a>
+                    }
+                </td>
         </tr>
 }
     </tbody>

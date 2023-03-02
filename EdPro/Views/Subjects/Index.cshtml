@@ -5,10 +5,12 @@
 }
 
 <h1>@ViewBag.EducationProgramName, предмети:</h1>
-
-<p>
-    @Html.ActionLink("Додати предмет", "Create", new {educationProgramId = @ViewBag.EducationProgramId})
-</p>
+@if (User.IsInRole("admin"))
+{
+    <p>
+        @Html.ActionLink("Додати предмет", "Create", new {educationProgramId = @ViewBag.EducationProgramId})
+    </p>
+}
 <table class="table">
     <thead>
         <tr>
@@ -43,9 +45,15 @@
                 @Html.DisplayFor(modelItem => item.Eprogram.Name)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Редагувати</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Деталі</a> |
+                    @if (User.IsInRole("admin"))
+                    {
+                <a asp-action="Edit" asp-route-id="@item.Id">Редагувати</a> 
+                    }
+                <a asp-action="Details" asp-route-id="@item.Id">Деталі</a> 
+                    @if (User.IsInRole("admin"))
+                    {
                 <a asp-action="Delete" asp-route-id="@item.Id">Видалити</a>
+                    }
             </td>
         </tr>
 }

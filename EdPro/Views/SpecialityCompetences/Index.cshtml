@@ -5,10 +5,12 @@
 }
 
 <h1>Компетентності спеціальності @ViewBag.SpecialityName:</h1>
-
-<p>
-    @Html.ActionLink("Додати компетентність до спеціальності", "Create", new {SpecialityId = @ViewBag.SpecialityId})
-</p>
+@if (User.IsInRole("admin"))
+{
+    <p>
+        @Html.ActionLink("Додати компетентність до спеціальності", "Create", new {SpecialityId = @ViewBag.SpecialityId})
+    </p>
+}
 <table class="table">
     <thead>
         <tr>
@@ -31,11 +33,17 @@
                 @Html.DisplayFor(modelItem => item.Speciality.Name)
             </td>
             <td>
+                    @if (User.IsInRole("admin"))
+                    {
                 <a asp-action="Edit" asp-route-id="@item.Id">Редагувати</a> 
                 <p></p>
+                    }
                 <a asp-action="Details" asp-route-id="@item.Id">Необхідні предмети</a>
                 <p></p>
+                    @if (User.IsInRole("admin"))
+                    {
                 <a asp-action="Delete" asp-route-id="@item.Id">Видалити</a>
+                    }
             </td>
         </tr>
 }

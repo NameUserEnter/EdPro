@@ -5,10 +5,12 @@
 }
 
 <h1>Навчальні результати</h1>
-
-<p>
-    <a asp-action="Create">Додати</a>
-</p>
+@if (User.IsInRole("admin"))
+{
+    <p>
+        <a asp-action="Create">Додати</a>
+    </p>
+}
 <table class="table">
     <thead>
         <tr>
@@ -37,11 +39,17 @@
                 @Html.DisplayFor(modelItem => item.Speciality.Name)
             </td>
             <td>
+                    @if (User.IsInRole("admin"))
+                    {
                 <a asp-action="Edit" asp-route-id="@item.Id">Редагувати</a> 
                 <p> </p>
+                    }
                 <a asp-action="Details" asp-route-id="@item.Id">Небхідні предмети</a>
                 <p> </p>
+                    @if (User.IsInRole("admin"))
+                    {
                 <a asp-action="Delete" asp-route-id="@item.Id">Видалити</a>
+                    }
             </td>
         </tr>
 }

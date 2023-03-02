@@ -2,7 +2,7 @@
 @model EdPro.ViewModel.ChangeRoleViewModel
 
 <h2>Зміна ролей для користувача @Model.UserEmail</h2>
-
+<div class="text-danger">@ViewBag.F</div>
 <form asp-action="Edit" method="post">
     <input type="hidden" name="userId" value="@Model.UserId" />
     <div class="form-group">

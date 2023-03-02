@@ -1,6 +1,7 @@
 ﻿@model IEnumerable<Microsoft.AspNetCore.Identity.IdentityRole>
 
 <h2>Список ролей</h2>
+<div class="text-danger">@ViewBag.F</div>
 <table class="table">
     @foreach (var role in Model)
     {

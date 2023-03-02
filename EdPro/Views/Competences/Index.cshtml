@@ -5,10 +5,12 @@
 }
 
 <h1>Компетентності</h1>
-
-<p>
-    <a asp-action="Create">Додати компетентність</a>
-</p>
+@if (User.IsInRole("admin"))
+{
+    <p>
+        <a asp-action="Create">Додати компетентність</a>
+    </p>
+}
 <table class="table">
     <thead>
         <tr>
@@ -30,12 +32,18 @@
             <td>
                 @Html.DisplayFor(modelItem => item.CompetenceType.CompType)
             </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Редагувати</a> 
+                <td>
+                    @if (User.IsInRole("admin"))
+                    {
+                        <a asp-action="Edit" asp-route-id="@item.Id">Редагувати</a> 
+                        <p></p>
+                    }
+                    <a asp-action="Details" asp-route-id="@item.Id">Деталі</a>
                 <p></p>
-                <a asp-action="Details" asp-route-id="@item.Id">Деталі</a>
-                <p></p>
+                    @if (User.IsInRole("admin"))
+                    {
                 <a asp-action="Delete" asp-route-id="@item.Id">Видалити</a>
+                    }
             </td>
         </tr>
 }

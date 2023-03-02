@@ -6,9 +6,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using EdPro.Models;
+using Microsoft.AspNetCore.Authorization;
+using System.Data;
 
 namespace EdPro.Controllers
 {
+    [Authorize(Roles = "admin, user, worker")]
     public class FacultiesController : Controller
     {
         private readonly EdProContext _context;
@@ -49,6 +52,7 @@ namespace EdPro.Controllers
         }
 
         // GET: Faculties/Create
+        [Authorize(Roles = "admin")]
         public IActionResult Create(int universityId)
         {
             ViewBag.UniversityId = universityId;
@@ -104,6 +108,7 @@ namespace EdPro.Controllers
         }
 
         // GET: Faculties/Edit/5
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Faculties == null)
@@ -157,6 +162,7 @@ namespace EdPro.Controllers
         }
 
         // GET: Faculties/Delete/5
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.Faculties == null)
