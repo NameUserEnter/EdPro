@@ -52,7 +52,7 @@
                 <a asp-action="Details" asp-route-id="@item.Id">Деталі</a> 
                     @if (User.IsInRole("admin"))
                     {
-                <a asp-action="Delete" asp-route-id="@item.Id">Видалити</a>
+                <a asp-action="Delete" asp-route-id="@item.Id"><button type="button" class="btn btn-outline-danger">Видалити</button></a>
                     }
             </td>
         </tr>
