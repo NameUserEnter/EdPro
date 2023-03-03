@@ -48,12 +48,13 @@ namespace EdPro.Controllers
                 return NotFound();
             }
 
-            return RedirectToAction("Index", "EpSubjectCompetences", new
-            {
-                id = specialityCompetence.Id,
-                specialityId = specialityCompetence.SpecialityId,
-                competenceId = specialityCompetence.CompetenceId
-            });
+            //return RedirectToAction("Index", "EpSubjectCompetences", new
+            //{
+            //    id = specialityCompetence.Id,
+            //    specialityId = specialityCompetence.SpecialityId,
+            //    competenceId = specialityCompetence.CompetenceId
+            //});
+            return View(specialityCompetence);
         }
 
         // GET: SpecialityCompetences/Create
@@ -74,20 +75,34 @@ namespace EdPro.Controllers
         public async Task<IActionResult> Create(int specialityId, [Bind("Id,SpecialityId,CompetenceId")] SpecialityCompetence specialityCompetence)
         {
             specialityCompetence.SpecialityId = specialityId;
-            if (ModelState.IsValid)
+            if (IsUnique(specialityCompetence.SpecialityId, specialityCompetence.CompetenceId))
             {
-                _context.Add(specialityCompetence);
-                await _context.SaveChangesAsync();
-                return RedirectToAction("Index", "SpecialityCompetences", new
+                if (ModelState.IsValid)
                 {
-                    id = specialityId,
-                    name = _context.Specialities.Where(c => c.Id == specialityId).FirstOrDefault().Name
-                });
+                    _context.Add(specialityCompetence);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction("Index", "SpecialityCompetences", new
+                    {
+                        id = specialityId,
+                        name = _context.Specialities.Where(c => c.Id == specialityId).FirstOrDefault().Name
+                    });
+                }
+            }
+            else
+            {
+                ViewData["ErrorMessage"] = "Така компетентність до цієї спеціальності вже додана!";
             }
             ViewBag.SpecialityId = specialityId;
             ViewBag.SpecialityName = _context.Specialities.Where(c => c.Id == specialityId).FirstOrDefault().Name;
             ViewData["CompetenceId"] = new SelectList(_context.Competences, "Id", "Competence1", specialityCompetence.CompetenceId);
             return View(specialityCompetence);
+        }
+
+        bool IsUnique(int specialityId, int competenceId)
+        {
+            var specialityCompetences = _context.SpecialityCompetences.Where(b => b.SpecialityId == specialityId && b.CompetenceId == competenceId).ToList();
+            if (specialityCompetences.Count == 0) return true;
+            return false;
         }
 
         // GET: SpecialityCompetences/Edit/5
@@ -105,7 +120,9 @@ namespace EdPro.Controllers
                 return NotFound();
             }
             ViewData["CompetenceId"] = new SelectList(_context.Competences, "Id", "Competence1", specialityCompetence.CompetenceId);
-            ViewData["SpecialityId"] = new SelectList(_context.Specialities, "Id", "Name", specialityCompetence.SpecialityId);
+            //ViewData["SpecialityId"] = new SelectList(_context.Specialities, "Id", "Name", specialityCompetence.SpecialityId);
+            ViewBag.SpecialityId = specialityCompetence.SpecialityId;
+            ViewBag.SpecialityName = _context.Specialities.Where(c => c.Id == specialityCompetence.SpecialityId).FirstOrDefault().Name;
             return View(specialityCompetence);
         }
 
@@ -114,36 +131,58 @@ namespace EdPro.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,SpecialityId,CompetenceId")] SpecialityCompetence specialityCompetence)
+        public async Task<IActionResult> Edit(int id, int specialityId, [Bind("Id,SpecialityId,CompetenceId")] SpecialityCompetence specialityCompetence)
         {
             if (id != specialityCompetence.Id)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            if (IsUniqueEdit(specialityCompetence.Id, specialityId, specialityCompetence.CompetenceId))
             {
-                try
+                if (ModelState.IsValid)
                 {
-                    _context.Update(specialityCompetence);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!SpecialityCompetenceExists(specialityCompetence.Id))
+                    try
                     {
-                        return NotFound();
+                        _context.Update(specialityCompetence);
+                        await _context.SaveChangesAsync();
                     }
-                    else
+                    catch (DbUpdateConcurrencyException)
                     {
-                        throw;
+                        if (!SpecialityCompetenceExists(specialityCompetence.Id))
+                        {
+                            return NotFound();
+                        }
+                        else
+                        {
+                            throw;
+                        }
                     }
+                    //return RedirectToAction(nameof(Index));
+                    return RedirectToAction("Index", "SpecialityCompetences", new
+                    {
+                        id = specialityId,
+                        name = _context.Specialities.Where(c => c.Id == specialityId).FirstOrDefault().Name
+                    });
                 }
-                return RedirectToAction(nameof(Index));
+            }
+            else
+            {
+                ViewData["ErrorMessage"] = "Така компетентність до цієї спеціальності вже додана!";
             }
             ViewData["CompetenceId"] = new SelectList(_context.Competences, "Id", "Competence1", specialityCompetence.CompetenceId);
-            ViewData["SpecialityId"] = new SelectList(_context.Specialities, "Id", "Name", specialityCompetence.SpecialityId);
+            //ViewData["SpecialityId"] = new SelectList(_context.Specialities, "Id", "Name", specialityCompetence.SpecialityId);
+            //ViewData["SpecialityId"] = new SelectList(_context.Specialities, "Id", "Name", specialityCompetence.SpecialityId);
+            ViewBag.SpecialityId = specialityId;
+            ViewBag.SpecialityName = _context.Specialities.Where(c => c.Id == specialityId).FirstOrDefault().Name;
             return View(specialityCompetence);
+        }
+
+        bool IsUniqueEdit(int id, int specialityId, int competenceId)
+        {
+            var specialityCompetences = _context.SpecialityCompetences.Where(b => b.SpecialityId == specialityId && b.CompetenceId == competenceId && b.Id != id).ToList();
+            if (specialityCompetences.Count == 0) return true;
+            return false;
         }
 
         // GET: SpecialityCompetences/Delete/5
@@ -164,6 +203,8 @@ namespace EdPro.Controllers
                 return NotFound();
             }
 
+            ViewBag.SpecialityId = specialityCompetence.SpecialityId;
+            ViewBag.SpecialityName = _context.Specialities.Where(c => c.Id == specialityCompetence.SpecialityId).FirstOrDefault().Name;
             return View(specialityCompetence);
         }
 
@@ -177,13 +218,27 @@ namespace EdPro.Controllers
                 return Problem("Entity set 'EdProContext.SpecialityCompetences'  is null.");
             }
             var specialityCompetence = await _context.SpecialityCompetences.FindAsync(id);
+            var epSubjectCompetences = _context.EpSubjectCompetences.Where(f => f.SpecialityCompetenceId == id).ToList();
+            if(epSubjectCompetences.Any())
+            {
+                foreach(var epSubjectCompetence in epSubjectCompetences)
+                {
+                    _context.EpSubjectCompetences.Remove(epSubjectCompetence);
+                }
+            }
             if (specialityCompetence != null)
             {
                 _context.SpecialityCompetences.Remove(specialityCompetence);
             }
             
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            //return RedirectToAction(nameof(Index));
+            var specialityId = specialityCompetence.SpecialityId;
+            return RedirectToAction("Index", "SpecialityCompetences", new
+            {
+                id = specialityId,
+                name = _context.Specialities.Where(c => c.Id == specialityId).FirstOrDefault().Name
+            });
         }
 
         private bool SpecialityCompetenceExists(int id)
