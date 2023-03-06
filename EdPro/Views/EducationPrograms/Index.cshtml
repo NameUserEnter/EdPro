@@ -4,8 +4,8 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Навчальні програми</h1>
-@if (User.IsInRole("admin") && User.IsInRole("worker"))
+<h1>Освітні програми</h1>
+@if (User.IsInRole("admin") || User.IsInRole("worker"))
 {
 <p>
     <a asp-action="Create"><button type="button" class="btn btn-secondary">Додати освітню програму</button></a>
@@ -57,14 +57,14 @@
                 @Html.DisplayFor(modelItem => item.Speciality.Name)
             </td>
             <td>
-                    @if (User.IsInRole("admin") && User.IsInRole("worker"))
+                    @if (User.IsInRole("admin") || User.IsInRole("worker"))
                     {
                         <a asp-action="Edit" asp-route-id="@item.Id"><button type="button" class="btn btn-outline-info">Редагувати</button></a>
                     <p></p>
                     }
                     <a asp-action="Details" asp-route-id="@item.Id"><button type="button" class="btn btn-outline-info">Предмети</button></a>
                     <p></p>
-                    @if (User.IsInRole("admin") && User.IsInRole("admin"))
+                    @if (User.IsInRole("admin") || User.IsInRole("admin"))
                     {
                         <a asp-action="Delete" asp-route-id="@item.Id"><button type="button" class="btn btn-outline-danger">Видалити</button></a>
                     }
