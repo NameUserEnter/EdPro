@@ -29,7 +29,7 @@
         <h1>Вхід Google</h1>
     <hr />
     @{
-        if (Model.ExternalLogins.Count == 0)
+        if (Model.ExternalLogins == null)
         {
             <div>No external logins configured</div>
         }
