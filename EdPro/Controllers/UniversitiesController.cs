@@ -11,7 +11,7 @@ using System.Data;
 
 namespace EdPro.Controllers
 {
-    //[Authorize(Roles = "admin, user, worker")]
+    [Authorize(Roles = "admin, user, worker")]
     public class UniversitiesController : Controller
     {
         private readonly EdProContext _context;
