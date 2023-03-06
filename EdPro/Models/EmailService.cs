@@ -9,7 +9,7 @@ namespace EdPro.Models
         {
             var emailMessage = new MimeMessage();
 
-            emailMessage.From.Add(new MailboxAddress("Администрация сайта", "robotpro@ukr.net"));
+            emailMessage.From.Add(new MailboxAddress("Адміністрація сайта", "robotpro@ukr.net"));
             emailMessage.To.Add(new MailboxAddress("", email));
             emailMessage.Subject = subject;
             emailMessage.Body = new TextPart(MimeKit.Text.TextFormat.Html)
