@@ -96,10 +96,10 @@
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                @if (User.IsInRole("admin") || User.IsInRole("worker") || User.IsInRole("user"))
-                {
                     <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                         <ul class="navbar-nav flex-grow-1">
+                        @if (User.IsInRole("admin") || User.IsInRole("worker") || User.IsInRole("user"))
+                        {
                             <li class="nav-item">
                                 <a class="nav-link text-white" asp-area="" asp-controller="Universities" asp-action="Index">Університети</a>
                             </li>
@@ -124,9 +124,13 @@
                             <li class="nav-item">
                                 <a class="nav-link text-white" asp-area="" asp-controller="EdProgramTypes" asp-action="Index">Типи освітніх програм</a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-white" asp-area="" asp-controller="Roles" asp-action="Index">Ролі</a>
-                            </li>
+                        }
+                        @if (User.IsInRole("admin"))
+                        {
+                                        <li class="nav-item">
+                                            <a class="nav-link text-white" asp-area="" asp-controller="Roles" asp-action="Index">Ролі</a>
+                                        </li>
+                        }
                             @*                        <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="Index">Користувачі</a>
                         </li>*@
@@ -147,7 +151,6 @@
                         </li>*@
                         </ul>
                     </div>
-                }
             </div>
         </nav>
     </header>
