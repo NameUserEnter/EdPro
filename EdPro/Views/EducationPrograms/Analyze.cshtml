@@ -1,0 +1,62 @@
+﻿
+@{
+    ViewData["Title"] = "Analyze";
+}
+
+<h1>Аналіз</h1>
+
+<button onclick="showDetails1()" class="btn btn-outline-info">Предмети, які не закривають жодний навчальний результат</button>
+<div id="details1" style="display: none;">
+  <p>блаблабла @ViewBag.d1</p>
+</div>
+<p></p>
+<button onclick="showDetails2()" class="btn btn-outline-info">Предмети, які не закривають жодної компетентності</button>
+<div id="details2" style="display: none;">
+    <p>блаблабла @ViewBag.d2</p>
+</div>
+<p></p>
+<button onclick="showDetails3()" class="btn btn-outline-info">Наявність навчальних результатів, які не закриваються хоча б однією дисципліною</button>
+<div id="details3" style="display: none;">
+    <p>@ViewBag.d3</p>
+</div>
+<p></p>
+<button onclick="showDetails4()" class="btn btn-outline-info">Наявність компетентностей, які не закриваються хоча б однією дисципліною</button>
+<div id="details4" style="display: none;">
+    <p>@ViewBag.d4</p>
+</div>
+<p></p>
+
+<script>
+function showDetails1() {
+  var details = document.getElementById("details1");
+  if (details.style.display === "none") {
+    details.style.display = "block";
+  } else {
+    details.style.display = "none";
+  }
+}
+function showDetails2() {
+  var details = document.getElementById("details2");
+  if (details.style.display === "none") {
+    details.style.display = "block";
+  } else {
+    details.style.display = "none";
+  }
+}
+function showDetails3() {
+  var details = document.getElementById("details3");
+  if (details.style.display === "none") {
+    details.style.display = "block";
+  } else {
+    details.style.display = "none";
+  }
+}
+    function showDetails4() {
+        var details = document.getElementById("details4");
+        if (details.style.display === "none") {
+            details.style.display = "block";
+        } else {
+            details.style.display = "none";
+        }
+    }
+</script>

@@ -216,7 +216,18 @@ namespace EdPro.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
+        public async Task<IActionResult> Analyze(int? id)
+        {
+            ViewBag.d1 = "";
+            
+            ViewBag.d2 = "";
 
+            ViewBag.d3 = "";
+           
+            ViewBag.d4 = "";
+            return View();
+
+        }
         private bool EducationProgramExists(int id)
         {
           return (_context.EducationPrograms?.Any(e => e.Id == id)).GetValueOrDefault();
