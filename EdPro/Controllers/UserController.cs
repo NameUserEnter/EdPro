@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace EdPro.Controllers
 {
-    //[Authorize(Roles = "admin")]
+    [Authorize(Roles = "admin")]
     public class UserController : Controller
     {
         UserManager<User> _userManager;
@@ -34,7 +34,7 @@ namespace EdPro.Controllers
         public async Task<IActionResult> Create(CreateUserViewModel model)
         {
             if (IsUnique(model.Email) == false)
-                return RedirectToAction("Create", "User", new { f = "Користувач з таким email вже існує" });
+                return RedirectToAction("Create", "User", new { F = "Користувач з таким email вже існує" });
             if (ModelState.IsValid)
             {
                 User user = new User { Email = model.Email, UserName = model.Email, Year = model.Year };
