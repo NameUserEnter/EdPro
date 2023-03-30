@@ -19,6 +19,7 @@ namespace EdPro.Models
 
             using (var client = new SmtpClient())
             {
+                client.CheckCertificateRevocation = false;
                 await client.ConnectAsync("smtp.ukr.net", 465, true);
                 await client.AuthenticateAsync("robotpro@ukr.net", "GkddMlahpqPD4dLY");
                 await client.SendAsync(emailMessage);
