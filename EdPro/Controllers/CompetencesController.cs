@@ -186,6 +186,22 @@ namespace EdPro.Controllers
                 return Problem("Entity set 'EdProContext.Competences'  is null.");
             }
             var competence = await _context.Competences.FindAsync(id);
+            var specialityCompetences = _context.SpecialityCompetences.Where(b => b.CompetenceId == id).ToList();
+            if(specialityCompetences.Any())
+            {
+                foreach(var specialityCompetence in specialityCompetences)
+                {
+                    var epSubjectCompetences = _context.EpSubjectCompetences.Where(b => b.SpecialityCompetenceId == specialityCompetence.Id).ToList();
+                    if (epSubjectCompetences.Any())
+                    {
+                        foreach(var epSubjectCompetece in epSubjectCompetences)
+                        {
+                            _context.EpSubjectCompetences.Remove(epSubjectCompetece);
+                        }
+                    }
+                    _context.SpecialityCompetences.Remove(specialityCompetence);
+                }
+            }
             if (competence != null)
             {
                 _context.Competences.Remove(competence);
