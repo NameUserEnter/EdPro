@@ -223,78 +223,214 @@ namespace EdPro.Controllers
             
             ViewBag.d2 = d2(id);
 
-            ViewBag.d3 = "";
+            ViewBag.d3 = d3(id);
            
-            ViewBag.d4 = "";
+            ViewBag.d4 = d4(id);
             return View();
 
         }
-       
+
+        //public string d1(int? id)
+        //{
+        //    HashSet<string> str = new HashSet<string> ();
+        //    var spec = _context.EducationPrograms.Where(s => s.Id == id).Select(s => s.SpecialityId).FirstOrDefault();
+        //    var LOs = _context.LearningOutcomes.Where(e => e.SpecialityId == spec);
+        //    var result = true;
+        //        foreach (var LO in LOs)
+        //        {
+        //            var epSubjectLoutcomes = _context.EpSubjectLoutcomes.Where(e => e.LearningOutcomeId == LO.Id);
+        //            var ex = (_context.Subjects.Where(s=>s.EprogramId == id).Select(s => s.Id)).Except(epSubjectLoutcomes.Select(e => e.SubjectId));
+        //            if (ex != null)
+        //            {
+        //            result = false;
+        //            foreach (var e in ex)
+        //            { 
+        //                var s = _context.Subjects.Where(s => s.Id == e).Select(s => s.Name).ToList();
+        //                str.AddRange(s);
+        //            }
+        //        }
+
+        //        }
+        //    if (result == true)
+        //    {
+        //        ViewBag.d1 = "Навчальні результати закриваються всіма дисциплінами";
+        //    }
+        //    else
+        //    {
+        //        var strRes = String.Join("\n", str);
+        //        ViewBag.d1 = $"Навчальні результати не закриваються цими дисциплінами: \n {strRes}";
+
+        //    }
+        //    return ViewBag.d1;
+        //}
+
         public string d1(int? id)
         {
-            HashSet<string> str = new HashSet<string> ();
-            var spec = _context.EducationPrograms.Where(s => s.Id == id).Select(s => s.SpecialityId).FirstOrDefault();
-            var LOs = _context.LearningOutcomes.Where(e => e.SpecialityId == spec);
-            var result = true;
-                foreach (var LO in LOs)
-                {
-                    var epSubjectLoutcomes = _context.EpSubjectLoutcomes.Where(e => e.LearningOutcomeId == LO.Id);
-                    var ex = (_context.Subjects.Where(s=>s.EprogramId == id).Select(s => s.Id)).Except(epSubjectLoutcomes.Select(e => e.SubjectId));
-                    if (ex != null)
-                    {
-                    result = false;
-                    foreach (var e in ex)
-                    { 
-                        var s = _context.Subjects.Where(s => s.Id == e).Select(s => s.Name).ToList();
-                        str.AddRange(s);
-                    }
-                }
-
-                }
-            if (result == true)
+            HashSet<string> str = new HashSet<string>();
+            var subjects = _context.Subjects.Where(b => b.EprogramId == id).ToList();
+            foreach (var subject in subjects)
             {
-                ViewBag.d1 = "Навчальні результати закриваються всіма дисциплінами";
+                var epSubjectLoutcomes = _context.EpSubjectLoutcomes.Where(b => b.SubjectId == subject.Id);
+                if (!epSubjectLoutcomes.Any())
+                {
+                    str.Add(subject.Name + "; ");
+                }
+            }
+            if(str.Count() == 0) 
+            {
+                ViewBag.d1 = " <h5> Всі дисципліни закривають хоча б один навчальний результат </h5>";
             }
             else
             {
                 var strRes = String.Join("\n", str);
-                ViewBag.d1 = $"Навчальні результати не закриваються цими дисциплінами: \n {strRes}";
-
+                ViewBag.d1 = $" <h5> Ці предмети не закривають жоден навчальний результат: </h5> {strRes}";
+                ViewBag.d1 = ViewBag.d1.Replace("\n", "<br>");
             }
             return ViewBag.d1;
         }
-        public string d2(int ? id)
+
+        //public string d2(int ? id)
+        //{
+        //    HashSet<string> str = new HashSet<string>();
+        //    var spec = _context.EducationPrograms.Where(s => s.Id == id).Select(s => s.SpecialityId).FirstOrDefault();
+        //    var comps = _context.SpecialityCompetences.Where(e => e.SpecialityId == spec);
+        //    var result = true;
+        //    foreach (var comp in comps)
+        //    {
+        //        var epSubjectCompetences = _context.EpSubjectCompetences.Where(e => e.SpecialityCompetenceId == comp.Id);
+        //        var ex = (_context.Subjects.Where(s => s.EprogramId == id).Select(s => s.Id)).Except(epSubjectCompetences.Select(e => e.SubjectId));
+        //        if (ex != null)
+        //        {
+        //            result = false;
+        //            foreach (var e in ex)
+        //            {
+        //                var s = _context.Subjects.Where(s => s.Id == e).Select(s => s.Name).ToList();
+        //                str.AddRange(s);
+        //            }
+        //        }
+
+        //    }
+        //    if (result == true)
+        //    {
+        //        ViewBag.d2 = "Компетентності закриваються всіма дисциплінами";
+        //    }
+        //    else
+        //    {
+        //        var strRes = String.Join("\n", str);
+        //        ViewBag.d2 = $"Компетентності не закриваються цими дисциплінами: \n {strRes}";
+
+        //    }
+        //    return ViewBag.d2;
+        //}
+
+        public string d2(int? id)
         {
             HashSet<string> str = new HashSet<string>();
-            var spec = _context.EducationPrograms.Where(s => s.Id == id).Select(s => s.SpecialityId).FirstOrDefault();
-            var comps = _context.SpecialityCompetences.Where(e => e.SpecialityId == spec);
-            var result = true;
-            foreach (var comp in comps)
+            var subjects = _context.Subjects.Where(b => b.EprogramId == id).ToList();
+            foreach (var subject in subjects)
             {
-                var epSubjectCompetences = _context.EpSubjectCompetences.Where(e => e.SpecialityCompetenceId == comp.Id);
-                var ex = (_context.Subjects.Where(s => s.EprogramId == id).Select(s => s.Id)).Except(epSubjectCompetences.Select(e => e.SubjectId));
-                if (ex != null)
+                var epSubjectCompetences = _context.EpSubjectCompetences.Where(b => b.SubjectId == subject.Id);
+                if (!epSubjectCompetences.Any())
                 {
-                    result = false;
-                    foreach (var e in ex)
-                    {
-                        var s = _context.Subjects.Where(s => s.Id == e).Select(s => s.Name).ToList();
-                        str.AddRange(s);
-                    }
+                    str.Add(subject.Name + "; ");
                 }
-
             }
-            if (result == true)
+            if (str.Count() == 0)
             {
-                ViewBag.d2 = "Компетентності закриваються всіма дисциплінами";
+                ViewBag.d2 = " <h5> Всі дисципліни закривають хоча б одину компетентність </h5>";
             }
             else
             {
                 var strRes = String.Join("\n", str);
-                ViewBag.d2 = $"Компетентності не закриваються цими дисциплінами: \n {strRes}";
-
+                ViewBag.d2 = $" <h5> Ці предмети не закривають жодену компетентність: </h5> {strRes}";
+                ViewBag.d2 = ViewBag.d2.Replace("\n", "<br>");
             }
             return ViewBag.d2;
+        }
+
+        public string d3(int? id)
+        {
+            HashSet<string> str = new HashSet<string>();
+            int specialityId = _context.EducationPrograms.Find(id).SpecialityId;
+            var learningOutcomes = _context.LearningOutcomes.Where(b => b.SpecialityId == specialityId).ToList();
+            foreach (var learningOutcome in learningOutcomes)
+            {
+                var epSubjectLoutcomes = _context.EpSubjectLoutcomes.Where(b => b.LearningOutcomeId == learningOutcome.Id).ToList();
+                if (!epSubjectLoutcomes.Any())
+                {
+                    str.Add(learningOutcome.Loname + "; ");
+                }
+                else
+                {
+                    List<Subject> subjects = new List<Subject>();
+                    foreach(var epSubjectLoutcome in epSubjectLoutcomes)
+                    {
+                        var sub = _context.Subjects.Find(epSubjectLoutcome.SubjectId);
+                        if(sub.EprogramId == id)
+                        {
+                            subjects.Add(sub);
+                        }
+                    }
+                    if(subjects.Count() == 0)
+                    {
+                        str.Add(learningOutcome.Loname + "; ");
+                    }
+                }
+            }
+            if (str.Count() == 0)
+            {
+                ViewBag.d3 = "<h5> Всі навчальні результати закриваються хоча б одніє дисципліною  </h5>";
+            }
+            else
+            {
+                var strRes = String.Join("\n", str);
+                ViewBag.d3 = $"<h5>Ці навчальні результати не закриваються жодною дисципліною: </h5> \n {strRes}";
+            }
+            return ViewBag.d3;
+        }
+
+        public string d4(int? id)
+        {
+            HashSet<string> str = new HashSet<string>();
+            int specialityId = _context.EducationPrograms.Find(id).SpecialityId;
+            var specialityCompetences = _context.SpecialityCompetences.Where(b => b.SpecialityId == specialityId).ToList();
+            foreach (var specialityCompetence in specialityCompetences)
+            {
+                var epSubjectCompetences = _context.EpSubjectCompetences.Where(b => b.SpecialityCompetenceId == specialityCompetence.Id).ToList();
+                if (!epSubjectCompetences.Any())
+                {
+                    var competence = _context.Competences.Find(specialityCompetence.CompetenceId);
+                    str.Add(competence.Competence1 + "; ");
+                }
+                else
+                {
+                    List<Subject> subjects = new List<Subject>();
+                    foreach (var epSubjectCompetence in epSubjectCompetences)
+                    {
+                        var sub = _context.Subjects.Find(epSubjectCompetence.SubjectId);
+                        if (sub.EprogramId == id)
+                        {
+                            subjects.Add(sub);
+                        }
+                    }
+                    if (subjects.Count() == 0)
+                    {
+                        var competence = _context.Competences.Find(specialityCompetence.CompetenceId);
+                        str.Add(competence.Competence1 + "; ");
+                    }
+                }
+            }
+            if (str.Count() == 0)
+            {
+                ViewBag.d4 = "<h5> Всі компетентності закриваються хоча б одніє дисципліною </h5>";
+            }
+            else
+            {
+                var strRes = String.Join("\n \n", str);
+                ViewBag.d4 = $"<h5> Ці компетентності не закриваються жодною дисципліною: </h5> {strRes}";
+                ViewBag.d4 = ViewBag.d4.Replace("\n", "<br>");
+            }
+            return ViewBag.d4;
         }
         private bool EducationProgramExists(int id)
         {
