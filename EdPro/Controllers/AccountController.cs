@@ -46,9 +46,9 @@ namespace EdPro.Controllers
                         protocol: HttpContext.Request.Scheme);
                     EmailService emailService = new EmailService();
                     await emailService.SendEmailAsync(model.Email, "Confirm your account",
-                        $"Підтвердіть регистрацію, перейшовши за посиланням: <a href='{callbackUrl}'>link</a>");
+                        $"Підтвердіть реєстрацію, перейшовши за посиланням: <a href='{callbackUrl}'>link</a>");
 
-                    return Content("Для завершення регистрації перевірте електрону почту і перейдіть за посиланням, вказаному в листі");
+                    return Content("Для завершення реєстрації перевірте електрону почту і перейдіть за посиланням, вказаному в листі");
 
                     //return RedirectToAction("Index", "Home");
                 }

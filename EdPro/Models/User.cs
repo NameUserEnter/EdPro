@@ -7,7 +7,7 @@ namespace EdPro.Models
     {
         [Required(ErrorMessage = "Поле не повинно бути пустим")]
         [Range(1945, 2017)]
-        [Display(Name = "Рік народжуння")]
+        [Display(Name = "Рік народження")]
         public int Year { get; set; }
     }
 }

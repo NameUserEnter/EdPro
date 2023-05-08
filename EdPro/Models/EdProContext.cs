@@ -36,7 +36,7 @@ namespace EdPro.Models
                 entity.HasOne(d => d.CompetenceType)
                     .WithMany(p => p.Competences)
                     .HasForeignKey(d => d.CompetenceTypeId)
-                    .OnDelete(DeleteBehavior.ClientCascade)
+                    .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("FK_Competences_CompetencesTypes");
             });
 
@@ -69,19 +69,19 @@ namespace EdPro.Models
                 entity.HasOne(d => d.EdPrType)
                     .WithMany(p => p.EducationPrograms)
                     .HasForeignKey(d => d.EdPrTypeId)
-                    .OnDelete(DeleteBehavior.ClientCascade)
+                    .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("FK_EducationPrograms_EdProgramTypes");
 
                 entity.HasOne(d => d.Faculty)
                     .WithMany(p => p.EducationPrograms)
                     .HasForeignKey(d => d.FacultyId)
-                    .OnDelete(DeleteBehavior.ClientCascade)
+                    .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("FK_EducationPrograms_Faculties");
 
                 entity.HasOne(d => d.Speciality)
                     .WithMany(p => p.EducationPrograms)
                     .HasForeignKey(d => d.SpecialityId)
-                    .OnDelete(DeleteBehavior.ClientCascade)
+                    .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("FK_EducationPrograms_Specialities");
             });
 
@@ -90,13 +90,13 @@ namespace EdPro.Models
                 entity.HasOne(d => d.SpecialityCompetence)
                     .WithMany(p => p.EpSubjectCompetences)
                     .HasForeignKey(d => d.SpecialityCompetenceId)
-                    .OnDelete(DeleteBehavior.ClientCascade)
+                    .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("FK_EpSubjectCompetences_SpecialityCompetences");
 
                 entity.HasOne(d => d.Subject)
                     .WithMany(p => p.EpSubjectCompetences)
                     .HasForeignKey(d => d.SubjectId)
-                    .OnDelete(DeleteBehavior.ClientCascade)
+                    .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("FK_EpSubjectCompetences_Subjects");
             });
 
@@ -107,13 +107,13 @@ namespace EdPro.Models
                 entity.HasOne(d => d.LearningOutcome)
                     .WithMany(p => p.EpSubjectLoutcomes)
                     .HasForeignKey(d => d.LearningOutcomeId)
-                    .OnDelete(DeleteBehavior.ClientCascade)
+                    .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("FK_EpSubjectLOutcomes_LearningOutcomes");
 
                 entity.HasOne(d => d.Subject)
                     .WithMany(p => p.EpSubjectLoutcomes)
                     .HasForeignKey(d => d.SubjectId)
-                    .OnDelete(DeleteBehavior.ClientCascade)
+                    .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("FK_EpSubjectLOutcomes_Subjects");
             });
 
@@ -124,7 +124,7 @@ namespace EdPro.Models
                 entity.HasOne(d => d.University)
                     .WithMany(p => p.Faculties)
                     .HasForeignKey(d => d.UniversityId)
-                    .OnDelete(DeleteBehavior.ClientCascade)
+                    .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("FK_Faculties_Universities");
             });
 
@@ -141,7 +141,7 @@ namespace EdPro.Models
                 entity.HasOne(d => d.Speciality)
                     .WithMany(p => p.LearningOutcomes)
                     .HasForeignKey(d => d.SpecialityId)
-                    .OnDelete(DeleteBehavior.ClientCascade)
+                    .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("FK_LearningOutcomes_Specialities");
             });
 
@@ -155,13 +155,13 @@ namespace EdPro.Models
                 entity.HasOne(d => d.Competence)
                     .WithMany(p => p.SpecialityCompetences)
                     .HasForeignKey(d => d.CompetenceId)
-                    .OnDelete(DeleteBehavior.ClientCascade)
+                    .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("FK_SpecialityCompetences_Competences");
 
                 entity.HasOne(d => d.Speciality)
                     .WithMany(p => p.SpecialityCompetences)
                     .HasForeignKey(d => d.SpecialityId)
-                    .OnDelete(DeleteBehavior.ClientCascade)
+                    .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("FK_SpecialityCompetences_Specialities");
             });
 
@@ -174,13 +174,13 @@ namespace EdPro.Models
                 entity.HasOne(d => d.Control)
                     .WithMany(p => p.Subjects)
                     .HasForeignKey(d => d.ControlId)
-                    .OnDelete(DeleteBehavior.ClientCascade)
+                    .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("FK_Subjects_ControlTypes");
 
                 entity.HasOne(d => d.Eprogram)
                     .WithMany(p => p.Subjects)
                     .HasForeignKey(d => d.EprogramId)
-                    .OnDelete(DeleteBehavior.ClientCascade)
+                    .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("FK_Subjects_EducationPrograms");
             });
 
