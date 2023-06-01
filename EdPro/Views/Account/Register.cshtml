@@ -1,8 +1,8 @@
 ﻿@model EdPro.ViewModel.RegisterViewModel
 <h2>Реєстрація нового користувача</h2>
 <div class="text-danger">@ViewBag.F</div>
-<form method="post" asp-controller="Account" asp-action="Register">
-    <div asp-validation-summary="ModelOnly"></div>
+<form method="post" asp-controller="Account" asp-action="Register">   
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     <div>
         <label asp-for="Email"></label><br />
         <input asp-for="Email" />

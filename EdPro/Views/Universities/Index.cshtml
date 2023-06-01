@@ -58,10 +58,10 @@
 
             function drawChart() {
 
-                $.get('/api/Chart/JsonData', function(JsonData) {
+            $.get('/api/Chart/JsonDataUniversity', function (JsonData) {
                     data = google.visualization.arrayToDataTable(JsonData, false);
                     var option = {
-                    title: "Співвідношення кількості факультетів в університетах",
+                    title: "Співвідношення кількості факультетів та університетів",
                         width: 500,
                         height: 400
                     };

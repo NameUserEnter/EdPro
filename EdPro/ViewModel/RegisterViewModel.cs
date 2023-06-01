@@ -10,9 +10,9 @@ namespace EdPro.ViewModel
         public string Email { get; set; }
 
         [Required(ErrorMessage = "Поле не повинно бути пустим")]
-        [Range(1945, 2017)]
+        [Range(1945, 2017, ErrorMessage = "Рік народжуння повинен бути від 1945 до 2017")]
         [Display(Name = "Рік народжуння")]
-        public int Year { get; set; }
+        public int? Year { get; set; }
 
         [Required(ErrorMessage = "Поле не повинно бути пустим")]
         [Display(Name = "Пароль")]

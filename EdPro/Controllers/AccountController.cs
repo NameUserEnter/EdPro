@@ -19,8 +19,9 @@ namespace EdPro.Controllers
             _signInManager = signInManager;
         }
         [HttpGet]
-        public IActionResult Register()
+        public IActionResult Register(string? f)
         {
+            ViewBag.F = f;
             return View();
         }
         [HttpPost]
@@ -29,8 +30,9 @@ namespace EdPro.Controllers
         {
             if (ModelState.IsValid )
             {
-                if(!IsUnique(model.Email)) return RedirectToAction("Register", "Account", new {F = "Даний email вже використовується" });
-                User user = new User { Email = model.Email, UserName = model.Email, Year = model.Year };
+                if (IsUnique(model.Email))
+                { return RedirectToAction("Register", "Account", new { F = "Даний email вже використовується" }); }
+                User user = new User { Email = model.Email, UserName = model.Email, Year = (int)model.Year };
                 // додаємо користувача
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
@@ -62,14 +64,20 @@ namespace EdPro.Controllers
             }
             return View(model);
         }
+        //bool IsUnique(string email)
+        //{
+        //    var users = _userManager.Users;
+        //    foreach (var user in users)
+        //    {
+        //        if ((user.Email == email)&& (_userManager.IsEmailConfirmedAsync(user).Result))
+        //                return false;
+        //    }
+        //    return true;
+        //}
         bool IsUnique(string email)
         {
-            var users = _userManager.Users;
-            foreach (var user in users)
-            {
-                if ((user.Email == email)&& (_userManager.IsEmailConfirmedAsync(user).Result))
-                        return false;
-            }
+            var q1 = _userManager.FindByEmailAsync(email);
+            if (q1.Result == null) { return false; }
             return true;
         }
 
@@ -88,7 +96,11 @@ namespace EdPro.Controllers
             }
             var result = await _userManager.ConfirmEmailAsync(user, code);
             if (result.Succeeded)
-                return RedirectToAction("Index", "Home");
+            {
+                await _userManager.AddToRoleAsync(user, "user");
+                await _signInManager.SignOutAsync();
+                return RedirectToAction("Login", "Account"); 
+            }
             else
                 return View("Error");
         }
@@ -148,6 +160,7 @@ namespace EdPro.Controllers
                     ModelState.AddModelError("", "Неправильний логін чи (та) пароль");
                 }
             }
+            model.ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             return View(model);
         }
 
@@ -275,22 +288,25 @@ namespace EdPro.Controllers
                 var user = await _userManager.FindByEmailAsync(model.Email);
                 if (user == null || !(await _userManager.IsEmailConfirmedAsync(user)))
                 {
-                    return View("ForgotPasswordConfirmation");
+                    ModelState.AddModelError("", "Не існує такого користувача");
+                    return View();
                 }
 
                 var code = await _userManager.GeneratePasswordResetTokenAsync(user);
                 var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
                 EmailService emailService = new EmailService();
                 await emailService.SendEmailAsync(model.Email, "Reset Password",
-                    $"Для скидання пароля пререйдіть за помиланням: <a href='{callbackUrl}'>link</a>");
+                    $"Для скидання пароля пререйдіть за посиланням: <a href='{callbackUrl}'>link</a>");
                 return View("ForgotPasswordConfirmation");
             }
             return View(model);
         }
         [HttpGet]
         [AllowAnonymous]
-        public IActionResult ResetPassword(string code = null)
+        public IActionResult ResetPassword(string userId, string code = null)
         {
+            var user = _userManager.FindByIdAsync(userId);
+            ViewBag.uId = user.Result.Email;
             return code == null ? View("Error") : View();
         }
 
@@ -301,12 +317,13 @@ namespace EdPro.Controllers
         {
             if (!ModelState.IsValid)
             {
+                ViewBag.uId = model.Email;
                 return View(model);
             }
             var user = await _userManager.FindByEmailAsync(model.Email);
             if (user == null)
             {
-                return View("ResetPasswordConfirmation");
+                return View();
             }
             var result = await _userManager.ResetPasswordAsync(user, model.Code, model.Password);
             if (result.Succeeded)

@@ -17,35 +17,38 @@ namespace EdPro.Controllers
             _context = context;
         }
 
-        [HttpGet("JsonData")]
-        public JsonResult JsonData()
+        [HttpGet("JsonDataUniversity")]
+        public JsonResult JsonDataUniversity()
         {
-            var services = _context.Universities.ToList();
+            var universities = _context.Universities.ToList();
             List<object> catOrder = new List<object>();
             catOrder.Add(new[] { "Університет", "Кількість Факультетів" });
-            foreach (var s in services)
+            foreach (var s in universities)
                 catOrder.Add(new object[] { s.Name, _context.Faculties.Where(b => b.UniversityId == s.Id).Count() });
             return new JsonResult(catOrder);
         }
 
-        //[HttpGet("JsonD")]
-        //public JsonResult JsonD()
-        //{
-        //    var employees = _context.Employees.ToList();
-        //    List<object> catOrder = new List<object>();
-        //    catOrder.Add(new[] { "Перукар", "Кількість замовлення" });
-        //    foreach (var e in employees)
-        //    {
-        //        var orders = _context.Orders.Where(o => o.EmployeeId == e.EmployeeId).ToList();
-        //        int count_o = 0;
-        //        foreach (var order in orders)
-        //        {
-        //            count_o += _context.OrdersItems.Where(b => b.OrderId == order.OrderId).Count();
-        //        }
-        //        catOrder.Add(new object[] { e.LastName, count_o });
-        //    }
-        //    return new JsonResult(catOrder);
-        //}
+        [HttpGet("JsonDataFaculty")]
+        public JsonResult JsonDataFaculty()
+        {
+            var faculties = _context.Faculties.ToList();
+            List<object> catOrder = new List<object>();
+            catOrder.Add(new[] { "Факультет", "Кількість освітніх програм" });
+            foreach (var s in faculties)
+                catOrder.Add(new object[] { s.Name, _context.EducationPrograms.Where(b => b.FacultyId == s.Id).Count() });
+            return new JsonResult(catOrder);
+        }
+
+        [HttpGet("JsonDataEdProgramTypes")]
+        public JsonResult JsonDataEdProgramTypes()
+        {
+            var faculties = _context.EdProgramTypes.ToList();
+            List<object> catOrder = new List<object>();
+            catOrder.Add(new[] { "Тип освітньої програми", "Кількість освітніх програм" });
+            foreach (var s in faculties)
+                catOrder.Add(new object[] { s.TypeName, _context.EducationPrograms.Where(b => b.EdPrTypeId == s.Id).Count() });
+            return new JsonResult(catOrder);
+        }
 
     }
 }
