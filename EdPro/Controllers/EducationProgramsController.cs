@@ -219,52 +219,18 @@ namespace EdPro.Controllers
         }
         public async Task<IActionResult> Analyze(int? id)
         {
-            ViewBag.d1 = d1(id);
+            ViewBag.d1 = Details1(id);
             
-            ViewBag.d2 = d2(id);
+            ViewBag.d2 = Details2(id);
 
-            ViewBag.d3 = d3(id);
+            ViewBag.d3 = Details3(id);
            
-            ViewBag.d4 = d4(id);
+            ViewBag.d4 = Details4(id);
             return View();
 
         }
 
-        //public string d1(int? id)
-        //{
-        //    HashSet<string> str = new HashSet<string> ();
-        //    var spec = _context.EducationPrograms.Where(s => s.Id == id).Select(s => s.SpecialityId).FirstOrDefault();
-        //    var LOs = _context.LearningOutcomes.Where(e => e.SpecialityId == spec);
-        //    var result = true;
-        //        foreach (var LO in LOs)
-        //        {
-        //            var epSubjectLoutcomes = _context.EpSubjectLoutcomes.Where(e => e.LearningOutcomeId == LO.Id);
-        //            var ex = (_context.Subjects.Where(s=>s.EprogramId == id).Select(s => s.Id)).Except(epSubjectLoutcomes.Select(e => e.SubjectId));
-        //            if (ex != null)
-        //            {
-        //            result = false;
-        //            foreach (var e in ex)
-        //            { 
-        //                var s = _context.Subjects.Where(s => s.Id == e).Select(s => s.Name).ToList();
-        //                str.AddRange(s);
-        //            }
-        //        }
-
-        //        }
-        //    if (result == true)
-        //    {
-        //        ViewBag.d1 = "Навчальні результати закриваються всіма дисциплінами";
-        //    }
-        //    else
-        //    {
-        //        var strRes = String.Join("\n", str);
-        //        ViewBag.d1 = $"Навчальні результати не закриваються цими дисциплінами: \n {strRes}";
-
-        //    }
-        //    return ViewBag.d1;
-        //}
-
-        public string d1(int? id)
+        public string Details1(int? id)
         {
             HashSet<string> str = new HashSet<string>();
             var subjects = _context.Subjects.Where(b => b.EprogramId == id).ToList();
@@ -289,41 +255,7 @@ namespace EdPro.Controllers
             return ViewBag.d1;
         }
 
-        //public string d2(int ? id)
-        //{
-        //    HashSet<string> str = new HashSet<string>();
-        //    var spec = _context.EducationPrograms.Where(s => s.Id == id).Select(s => s.SpecialityId).FirstOrDefault();
-        //    var comps = _context.SpecialityCompetences.Where(e => e.SpecialityId == spec);
-        //    var result = true;
-        //    foreach (var comp in comps)
-        //    {
-        //        var epSubjectCompetences = _context.EpSubjectCompetences.Where(e => e.SpecialityCompetenceId == comp.Id);
-        //        var ex = (_context.Subjects.Where(s => s.EprogramId == id).Select(s => s.Id)).Except(epSubjectCompetences.Select(e => e.SubjectId));
-        //        if (ex != null)
-        //        {
-        //            result = false;
-        //            foreach (var e in ex)
-        //            {
-        //                var s = _context.Subjects.Where(s => s.Id == e).Select(s => s.Name).ToList();
-        //                str.AddRange(s);
-        //            }
-        //        }
-
-        //    }
-        //    if (result == true)
-        //    {
-        //        ViewBag.d2 = "Компетентності закриваються всіма дисциплінами";
-        //    }
-        //    else
-        //    {
-        //        var strRes = String.Join("\n", str);
-        //        ViewBag.d2 = $"Компетентності не закриваються цими дисциплінами: \n {strRes}";
-
-        //    }
-        //    return ViewBag.d2;
-        //}
-
-        public string d2(int? id)
+        public string Details2(int? id)
         {
             HashSet<string> str = new HashSet<string>();
             var subjects = _context.Subjects.Where(b => b.EprogramId == id).ToList();
@@ -348,7 +280,7 @@ namespace EdPro.Controllers
             return ViewBag.d2;
         }
 
-        public string d3(int? id)
+        public string Details3(int? id)
         {
             HashSet<string> str = new HashSet<string>();
             int specialityId = _context.EducationPrograms.Find(id).SpecialityId;
@@ -389,7 +321,7 @@ namespace EdPro.Controllers
             return ViewBag.d3;
         }
 
-        public string d4(int? id)
+        public string Details4(int? id)
         {
             HashSet<string> str = new HashSet<string>();
             int specialityId = _context.EducationPrograms.Find(id).SpecialityId;

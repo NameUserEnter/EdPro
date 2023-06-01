@@ -2,6 +2,7 @@
 @{
     ViewBag.Title = "Створення користувача";
 }
+<h2>Створення користувача</h2>
 <div class="text-danger">@ViewBag.F</div>
 <form asp-action="Create" asp-controller="User">
 @*    <div asp-validation-summary="All" class="text-danger"></div>
@@ -17,6 +18,7 @@
         <label asp-for="Year" class="control-label">Год рождения</label>
         <input type="number" asp-for="Year" class="form-control" />
     </div>*@
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     <div>
         <label asp-for="Email"></label><br />
         <input asp-for="Email" />

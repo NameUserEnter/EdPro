@@ -2,6 +2,8 @@
 @{
     ViewBag.Title = "Редагування користувача";
 }
+<h2>Редагування користувача @Model.Email</h2>
+<div class="text-danger">@ViewBag.F</div>
 <form asp-action="Edit" asp-controller="User">
     <div asp-validation-summary="All" class="text-danger"></div>
     <div class="form-group">
@@ -9,7 +11,7 @@
     </div>
     <div class="form-group">
         <label asp-for="Email" class="control-label">Email</label>
-        <input type="text" asp-for="Email" class="form-control" />
+        <input type="text" asp-for="Email" class="form-control" readonly />
     </div>
     <div class="form-group">
         <label asp-for="Year" class="control-label">Рік народжения</label>

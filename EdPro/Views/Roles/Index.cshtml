@@ -8,7 +8,7 @@
         <tr>
             <td>@role.Name</td>
             <td>
-                <form asp-action="Delete" asp-route-id="@role.Id" method="post">
+                <form asp-action="Index" asp-route-f="@role" asp-route-id="@role.Id" method="post">
                     <button type="submit" class="btn btn-sm btn-danger">
                         Видалити
                     </button>

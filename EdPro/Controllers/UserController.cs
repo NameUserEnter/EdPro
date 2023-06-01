@@ -33,11 +33,11 @@ namespace EdPro.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(CreateUserViewModel model)
         {
-            if (IsUnique(model.Email) == false)
-                return RedirectToAction("Create", "User", new { F = "Користувач з таким email вже існує" });
             if (ModelState.IsValid)
             {
-                User user = new User { Email = model.Email, UserName = model.Email, Year = model.Year };
+                if (!IsUnique(model.Email))
+                    return RedirectToAction("Create", "User", new { F = "Користувач з таким email вже існує" });
+                User user = new User { Email = model.Email, UserName = model.Email, Year = (int)model.Year };
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
@@ -56,7 +56,7 @@ namespace EdPro.Controllers
         bool IsUnique(string email)
         {
             var q1 = _userManager.FindByEmailAsync(email);
-            if (q1 == null) { return true; }
+            if (q1.Result == null) { return true; }
             return false;
         }
         public async Task<IActionResult> Edit(string id)
@@ -80,7 +80,7 @@ namespace EdPro.Controllers
                 {
                     user.Email = model.Email;
                     user.UserName = model.Email;
-                    user.Year = model.Year;
+                    user.Year = (int)model.Year;
 
                     var result = await _userManager.UpdateAsync(user);
                     if (result.Succeeded)
@@ -152,7 +152,7 @@ namespace EdPro.Controllers
                 }
                 else
                 {
-                    ModelState.AddModelError(string.Empty, "Пользователь не найден");
+                    ModelState.AddModelError(string.Empty, "Користувач не знайдений");
                 }
             }
             return View(model);

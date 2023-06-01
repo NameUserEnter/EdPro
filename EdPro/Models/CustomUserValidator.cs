@@ -14,7 +14,7 @@ namespace EdPro.Models
             {
                 errors.Add(new IdentityError
                 {
-                    Description = "Цей домен в спам-базе. Оберіть другий почтовий сервіс"
+                    Description = "Цей домен в спам-базі. Оберіть другий почтовий сервіс"
                 });
             }
             if (user.UserName.Contains("admin"))

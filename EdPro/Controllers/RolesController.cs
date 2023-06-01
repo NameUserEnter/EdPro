@@ -18,7 +18,7 @@ namespace LibraryWebApplication.Controllers
             _userManager = userManager;
         }
         //public IActionResult Index() => View(_roleManager.Roles.ToList());
-        public async Task<IActionResult> Index(string? f, int? id)
+        public async Task<IActionResult> Index(string? f, string? id)
         {
             ViewBag.F = null;
             if (f != null)
